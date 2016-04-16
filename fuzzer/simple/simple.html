@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Morph Simple Fuzzer</title>
+<script type='text/javascript'>
+
+var mor_array = %MOR_ARRAY% ;
+var mor_index = 0 ;
+// Pick a random number between 0 and X
+function morph_rand( x ){
+	//return Math.floor( Math.random() * x );
+	index = (mor_index++) % (mor_array.length);
+	return mor_array[index] % x;
+}
+
+function rand_item( arr ){
+	return arr[morph_rand(arr.length)];
+}
+
+elements = [
+	"a","abbr","input","ins","isindex","b","base","basefont","bdi","bdo","big","blockquote","body","br","button",
+	"canvas","caption","center","cite","code","col","colgroup","command",
+	"datalist","dd","del","details","dir","div","dfn","dialog","dl","dt",
+	"em","embed",
+	"fieldset","figcaption","figure","font","footer","form","frame","frameset",
+	"h1","h2","h3","h4","h5","h6","head","header","hr","html",
+	"i","iframe","img","input","ins","isindex",
+	"table","tbody","td","textarea","tfoot","th","thead","time","title","tr","track","tt",
+	"wbr","xmp"
+];
+MAX_ELEMENT_NUM = 200;
+
+function morph_fuzz(){
+	elementTree = [];	
+	for(k=0;k<morph_rand(MAX_ELEMENT_NUM);k++){
+		r = rand_item(elements);
+		elementTree[k] = document.createElement(r);
+		elementTree[k].id = "Element" + k;
+		rb = morph_rand(document.all.length);
+		document.all[rb].appendChild(elementTree[k]);	
+	}
+}
+
+function morph_main(){
+	morph_fuzz();
+	window.location.reload(true);
+}	
+</script>
+</head>
+<body onload="morph_main()">
+<img src="logo.png" />
+</body>
+</html>
+
