@@ -45,8 +45,9 @@ def main() :
     BROWSER_PID=browser_process[2]  #  browser_process[2] === PID
     time.sleep(0.2)
     debugger=pydbg.pydbg()
-    debugger.attach(get_sub_process(BROWSER_PID)[0])
+    debugger.attach(BROWSER_PID)    #  get_sub_process(BROWSER_PID)[0])
     debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,dump_process_and_restart)
+    debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,dump_process_and_restart)
     debugger.run()
     win32event.WaitForSingleObject(browser_process[0],-1)  #  browser_process[0] === Process Handle
     

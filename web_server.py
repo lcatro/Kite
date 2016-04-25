@@ -17,10 +17,12 @@ class MainHandler(tornado.web.RequestHandler):
         self.vectors = None
         # 1.generate random arrays
         intArray = []
-        for x in range(300):
-            intArray.append(random.randint(0, 300))
+        int_max=700
+        for x in range(int_max):
+            intArray.append(random.randint(0, int_max))
         # 2.replace vecotr template
         self.vectors = self.template.replace("%MOR_ARRAY%", str(intArray), 1)
+        self.vectors = self.vectors.replace("%MOR_INDEX%", str(random.randint(0, 10)), 1)
 
     def get(self):
         global MOR_POC
