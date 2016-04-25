@@ -18,9 +18,9 @@
 
 ###Valid PoC File
 1.run `valid_server.py`<br/><br/>
-![step_5_2](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_6.png)<br/><br/>
+![step_6](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_6.png)<br/><br/>
 2.run `valid_poc.py`<br/><br/>
-![step_5_2](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_7.png)<br/><br/>
+![step_7](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_7.png)<br/><br/>
 WARNING! Sometime Browser Will Follwing Down in DeadLoop .Just Using `taskmgr.exe` to Kill it .`valid_poc.py` Will Recall Browser EXE
 TIPS :If you get a Exploit File ,Congratulation you !This file will be save to dir **exploit**
 <br/>
