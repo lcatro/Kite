@@ -28,7 +28,8 @@ TIPS :If you get a Exploit File ,Congratulation you !This file will be save to d
 ###Other Envirment Setting
 1.Set IE Single Process -> `set_ie_single_process.reg`<br/><br/>
 2.Set disable system crash tips window -> `clear_system_debug_tips_window.reg`<br/><br/>
-
+3.Using `valid_poc_debug.py` will see more detail in `valid_poc.py` debug crash files<br/><br/>
+![step_8](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/add_show_debug_detail.png)
 ---
 so ,this is a full step to collect a crash PoC ,but i write a auto fuzzing script -- process_monitor.py .You just need set some argerment about target fuzzing browser path .etc .Good luck ! ..
 <br/>

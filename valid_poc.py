@@ -2,10 +2,10 @@
 import os
 import pydbg
 import requests
+import socket
 import sys
 import win32event
 import win32process
-
 
 BROWSER_PATH='C:\\Program Files\\Internet Explorer\\iexplore.exe'
 BROWSER_PID=0
@@ -25,6 +25,19 @@ def restart_process(self) :
     self.detach()
     kill_process(BROWSER_PID)
     os.system('start valid_poc.py '+str(exploit_index))
+
+def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
+    print 'WARNING! Exploit:\n',str(EIP)[:-1],instruction,str(EAX),str(EBX),str(ECX),str(EDX),str(ESP),str(EBP),str(ESI),str(EDI)
+    exploit_data=requests.get(POC_COUNT_URL).text
+    exploit_file=open(EXPLOIT_OUTPUT_PATH+'\\'+str(exploit_index)+'.exploit.html','w')
+    if exploit_file :
+        exploit_file.write(exploit_data)
+        exploit_file.close()
+    
+def debug_send(debug_string) :
+    sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+    sock.sendto(debug_string,('127.0.0.1',10086))
+    sock.close()
     
 def crash_recall_access_violation(self) :
     EIP=self.get_register('EIP')
@@ -36,21 +49,27 @@ def crash_recall_access_violation(self) :
     EBP=self.get_register('EBP')
     ESI=self.get_register('ESI')
     EDI=self.get_register('EDI')
-    
     instruction=self.disasm(EIP)
+    
+    output=''
+#    for ins in self.disasm_around(EIP,10) :
+#        output+='Add:'+str(ins[0])+'-'+ins[1]+'\r'
+    output+=str(hex(EIP))[:-1]+'-'+instruction
+    debug_send(output)
+        
     if 'call'==instruction[0:4] :
-        print 'WARNING! Exploit:\n',str(EIP)[:-1],instruction,str(EAX),str(EBX),str(ECX),str(EDX),str(ESP),str(EBP),str(ESI),str(EDI)
-        exploit_data=requests.get(POC_COUNT_URL).text
-        exploit_file=open(EXPLOIT_OUTPUT_PATH+'\\'+str(poc_index)+'.exploit.html','w')
-        if exploit_file :
-            exploit_file.write(exploit_data)
-            exploit_file.close()
+        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+    elif 'mov'==instruction[0:3] :
+        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+    elif 'pop'==instruction[0:3] :
+        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
 #    else :
 #        print 'None'
+
     restart_process(self)
 
 def crash_recall_guard_page(self) :
-    pass
+    crash_recall_access_violation(self)
     
 if __name__=='__main__' :
     poc_count=int(requests.get(POC_COUNT_URL).text)
