@@ -24,7 +24,7 @@ def kill_process(pid) :
 def restart_process(self) :
     self.detach()
     kill_process(BROWSER_PID)
-    os.system('valid_poc.py '+str(exploit_index))
+    os.system('start valid_poc.py '+str(exploit_index))
     
 def crash_recall_access_violation(self) :
     EIP=self.get_register('EIP')
