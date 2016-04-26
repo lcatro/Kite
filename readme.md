@@ -21,15 +21,20 @@
 ![step_6](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_6.png)<br/><br/>
 2.run `valid_poc.py`<br/><br/>
 ![step_7](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_7.png)<br/><br/>
-WARNING! Sometime Browser Will Follwing Down in DeadLoop .Just Using `taskmgr.exe` to Kill it .`valid_poc.py` Will Recall Browser EXE
+WARNING! Sometime Browser Will Follwing Down in DeadLoop .Just Using `taskmgr.exe` to Kill it .`valid_poc.py` Will Recall Browser EXE<br/>
 TIPS :If you get a Exploit File ,Congratulation you !This file will be save to dir **exploit**
 <br/>
+
+###How to using valid_poc.py
+`valid_poc.py` will help you dig valueable PoC in all crash files,using :<br/><br/>
+**valid_poc.py** %poc_index%  --  test a poc<br/>
+**valid_poc.py** %poc_index% debug  --  test a poc and output more detail<br/><br/>
+if you want to get more detail in analays crash files information ,plaese start `valid_poc_debug.py`.you can see that instruction where will crash<br/><br/>
+![step_8](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/add_show_debug_detail.png)
 
 ###Other Envirment Setting
 1.Set IE Single Process -> `set_ie_single_process.reg`<br/><br/>
 2.Set disable system crash tips window -> `clear_system_debug_tips_window.reg`<br/><br/>
-3.Using `valid_poc_debug.py` will see more detail in `valid_poc.py` debug crash files<br/><br/>
-![step_8](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/add_show_debug_detail.png)
 ---
 so ,this is a full step to collect a crash PoC ,but i write a auto fuzzing script -- process_monitor.py .You just need set some argerment about target fuzzing browser path .etc .Good luck ! ..
 <br/>
