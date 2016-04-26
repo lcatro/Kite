@@ -53,4 +53,4 @@ def main() :
     
 if __name__=='__main__' :
     main()
-    os.system('process_monitor.py')
+    os.system('start process_monitor.py')
