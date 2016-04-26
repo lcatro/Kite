@@ -35,13 +35,16 @@ def format_output(memory_data) :
         output_string+=str(hex(ord(memory_data_index)))+' '
     return output_string
         
-def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
-    print 'WARNING! Exploit:',str(hex(EIP))[:-1],instruction,'\n'
-    for ins in self.disasm_around(EIP,10) :
-        if ins[0]==EIP :
+def get_instruction(self,address) :
+    for ins in self.disasm_around(address,10) :
+        if ins[0]==address :
             print '->Add:'+str(hex(ins[0]))[:-1]+'-'+ins[1]
         else :
             print '  Add:'+str(hex(ins[0]))[:-1]+'-'+ins[1]
+    
+def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
+    print 'WARNING! Exploit:',str(hex(EIP))[:-1],instruction,'\n'
+    get_instruction(self,EIP)
     print ''
     print 'EAX:'+str(hex(EAX))[:-1],'EBX:'+str(hex(EBX))[:-1],'ECX:'+str(hex(ECX))[:-1],'EDX:'+str(hex(EDX))[:-1],'ESP:'+str(hex(ESP))[:-1],'EBP:'+str(hex(EBP))[:-1],'ESI:'+str(hex(ESI))[:-1],'EDI:'+str(hex(EDI))[:-1]
     if not debugger_state :
@@ -52,7 +55,7 @@ def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
             exploit_file.close()
     else :
         print 'Easy Debug Viewer:'
-        print 'command:-r %regesit% (look regesit) ;-a %address% (look memory address) ;-quit (will exit )'
+        print 'command:-r %regesit% (look regesit) ;-a %address% (look memory address) ;-u %address% (get instruction) ;-quit (will exit )'
         while True :
             command=raw_input('->')
             if command[:2]=='-r' :
@@ -61,6 +64,8 @@ def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
                 dump_data=self.read(int(command[3:]),DUMP_DATA_LENGTH)
                 print format_output(dump_data)
                 print dump_data
+            elif command[:2]=='-u' and str.isdigit(command[3:]) :
+                get_instruction(self,int(command[3:]))
             elif command[:5]=='-quit' :
                 break
     
