@@ -7,18 +7,19 @@ import sys
 import win32event
 import win32process
 
+BASE_DIR=os.path.dirname(__file__)
 BROWSER_PATH='C:\\Program Files\\Internet Explorer\\iexplore.exe'
 BROWSER_PID=0
 DUMP_DATA_LENGTH=128
-EXPLOIT_OUTPUT_PATH='C:\\Users\\Administrator\\Desktop\\browser_fuzzing\\exploit'
+EXPLOIT_OUTPUT_PATH=BASE_DIR+'\\exploit'
 POC_COUNT_URL='http://127.0.0.1/poc?all'
 POC_URL='http://127.0.0.1/poc?'
+
 debugger=None
-debugger_state=False
 exploit_index=0
 
 def create_process(process_path) :
-    return win32process.CreateProcess(None, process_path, None , None , 0 ,win32process.CREATE_NO_WINDOW , None , None ,win32process.STARTUPINFO())
+    return win32process.CreateProcess(None,process_path,None,None,0,win32process.CREATE_NO_WINDOW,None,None,win32process.STARTUPINFO())
 
 def kill_process(pid) :
     os.kill(pid,9)
@@ -55,17 +56,17 @@ def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
             exploit_file.close()
     else :
         print 'Easy Debug Viewer:'
-        print 'command:-r %regesit% (look regesit) ;-a %address% (look memory address) ;-u %address% (get instruction) ;-quit (will exit )'
+        print 'command:-r %regesit% (look regesit) ;-a %address% (look memory address) ;-u %address% (get instruction) ;-quit (will exit)'
         while True :
             command=raw_input('->')
             if command[:2]=='-r' :
                 print str(hex(self.get_register(str.upper(command[3:]))))[:-1]
             elif command[:2]=='-a' and str.isdigit(command[3:]) :
-                dump_data=self.read(int(command[3:]),DUMP_DATA_LENGTH)
+                dump_data=self.read(eval(command[3:]),DUMP_DATA_LENGTH)
                 print format_output(dump_data)
                 print dump_data
             elif command[:2]=='-u' and str.isdigit(command[3:]) :
-                get_instruction(self,int(command[3:]))
+                get_instruction(self,eval(command[3:]))
             elif command[:5]=='-quit' :
                 break
     
@@ -112,19 +113,18 @@ if __name__=='__main__' :
     debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,crash_recall_guard_page)
     debugger.set_callback(pydbg.defines.EXIT_PROCESS_DEBUG_EVENT,restart_process)
     
-    if len(sys.argv)==3 and str.isdigit(sys.argv[1]) and sys.argv[2]=='debug' :
-        if poc_count>=int(sys.argv[1]) :
-            browser_process=create_process(BROWSER_PATH+' '+POC_URL+str(sys.argv[1]))
-            exploit_index=int(sys.argv[1])
-            debugger_state=True
-    elif len(sys.argv)==2 and str.isdigit(sys.argv[1]) :
+    browser_process=None
+    if len(sys.argv)==2 and str.isdigit(sys.argv[1]) :
         if poc_count>int(sys.argv[1]) :
             browser_process=create_process(BROWSER_PATH+' '+POC_URL+str(sys.argv[1]))
             exploit_index=int(sys.argv[1])
+    elif len(sys.argv)==2 and sys.argv[1]=='count' :
+        print 'PoC File Count:'+str(poc_count)
+        exit()
     else :
         browser_process=create_process(BROWSER_PATH+' '+POC_URL+str(0))
         exploit_index=0
     BROWSER_PID=browser_process[2]
-    debugger.attach(browser_process[2])
+    debugger.attach(BROWSER_PID)
     debugger.run()
     
