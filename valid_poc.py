@@ -8,9 +8,10 @@ import win32event
 import win32process
 
 BASE_DIR=os.path.dirname(__file__)
-BROWSER_PATH="C:\Program Files (x86)\Internet Explorer\iexplore.exe"#'C:\\Program Files\\Internet Explorer\\iexplore.exe'
+BROWSER_PATH="C:\\Program Files (x86)\\Internet Explorer\\iexplore.exe"#'C:\\Program Files\\Internet Explorer\\iexplore.exe'
 BROWSER_PID=0
 DUMP_DATA_LENGTH=128
+EXCEPTION_STACK_OVEWFLOW=0xC00000FD
 EXPLOIT_OUTPUT_PATH=BASE_DIR+'\\exploit'
 POC_COUNT_URL='http://127.0.0.1/poc?all'
 POC_URL='http://127.0.0.1/poc?'
@@ -113,6 +114,7 @@ if __name__=='__main__' :
     debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,crash_recall_access_violation)
     debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,crash_recall_guard_page)
     debugger.set_callback(pydbg.defines.EXIT_PROCESS_DEBUG_EVENT,restart_process)
+    debugger.set_callback(EXCEPTION_STACK_OVEWFLOW,crash_recall_access_violation)
     
     browser_process=None
     if len(sys.argv)==3 and str.isdigit(sys.argv[1]) and sys.argv[2]=='debug' :

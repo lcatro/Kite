@@ -8,6 +8,8 @@ import win32process
 BROWSER_PATH='"C:\Program Files\Internet Explorer\iexplore.exe"'
 BROWSER_ARG_LIST=''
 FUZZING_URL='http://127.0.0.1/vector'
+EXCEPTION_STACK_OVEWFLOW=0xC00000FD
+
 BROWSER_PID=0
 debugger=None
 
@@ -49,6 +51,7 @@ def main() :
         debugger.attach(BROWSER_PID)    #  get_sub_process(BROWSER_PID)[0])
         debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,dump_process_and_restart)
         debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,dump_process_and_restart)
+        debugger.set_callback(EXCEPTION_STACK_OVEWFLOW,dump_process_and_restart)
         debugger.run()
         win32event.WaitForSingleObject(browser_process[0],-1)  #  browser_process[0] === Process Handle
     except :
