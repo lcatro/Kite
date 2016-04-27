@@ -32,9 +32,17 @@ TIPS :If you get a Exploit File ,Congratulation you !This file will be save to d
 if you want to get more detail in analays crash files information ,plaese start `valid_poc_debug.py`.you can see that instruction where will crash<br/><br/>
 ![step_8](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/add_show_debug_detail.png)
 
+###About valid_server.py
+You can not execute a JavaScript or VBScript in Internet Explorer still load in file:// .So I make this WEB Server to resolve this probleam ,this is Using :
+**valid_server.py**  --  run server(it will load crash file from path \poc)<br/>
+**valid_server.py** debug  --  run server(it will load crash file from path \exploit)<br/>
+if you want to debug a exploit file ,using `valid_server.py debug` and `valid_poc.py %CrashFileIndex% debug` .`valid_poc.py` include a small debugger (support:-r %regesit% (look regesit) ;-a %address% (look memory address) ;-u %address% (get instruction) ;-quit (will exit)).<br/><br/>
+if you want to all automation ,plaese using `valid_poc_debug.py`
+
 ###Other Envirment Setting
 1.Set IE Single Process -> `set_ie_single_process.reg`<br/><br/>
 2.Set disable system crash tips window -> `clear_system_debug_tips_window.reg`<br/><br/>
+
 ---
 so ,this is a full step to collect a crash PoC ,but i write a auto fuzzing script -- process_monitor.py .You just need set some argerment about target fuzzing browser path .etc .Good luck ! ..
 <br/>

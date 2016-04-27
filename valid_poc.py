@@ -8,7 +8,7 @@ import win32event
 import win32process
 
 BASE_DIR=os.path.dirname(__file__)
-BROWSER_PATH='C:\\Program Files\\Internet Explorer\\iexplore.exe'
+BROWSER_PATH="C:\Program Files (x86)\Internet Explorer\iexplore.exe"#'C:\\Program Files\\Internet Explorer\\iexplore.exe'
 BROWSER_PID=0
 DUMP_DATA_LENGTH=128
 EXPLOIT_OUTPUT_PATH=BASE_DIR+'\\exploit'
@@ -16,6 +16,7 @@ POC_COUNT_URL='http://127.0.0.1/poc?all'
 POC_URL='http://127.0.0.1/poc?'
 
 debugger=None
+debugger_state=False
 exploit_index=0
 
 def create_process(process_path) :
@@ -114,7 +115,12 @@ if __name__=='__main__' :
     debugger.set_callback(pydbg.defines.EXIT_PROCESS_DEBUG_EVENT,restart_process)
     
     browser_process=None
-    if len(sys.argv)==2 and str.isdigit(sys.argv[1]) :
+    if len(sys.argv)==3 and str.isdigit(sys.argv[1]) and sys.argv[2]=='debug' :
+        if poc_count>=int(sys.argv[1]) :
+            browser_process=create_process(BROWSER_PATH+' '+POC_URL+str(sys.argv[1]))
+            exploit_index=int(sys.argv[1])
+            debugger_state=True
+    elif len(sys.argv)==2 and str.isdigit(sys.argv[1]) :
         if poc_count>int(sys.argv[1]) :
             browser_process=create_process(BROWSER_PATH+' '+POC_URL+str(sys.argv[1]))
             exploit_index=int(sys.argv[1])
