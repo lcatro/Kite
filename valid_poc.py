@@ -125,6 +125,9 @@ if __name__=='__main__' :
         browser_process=create_process(BROWSER_PATH+' '+POC_URL+str(0))
         exploit_index=0
     BROWSER_PID=browser_process[2]
-    debugger.attach(BROWSER_PID)
-    debugger.run()
-    
+    try :
+        debugger.attach(BROWSER_PID)
+        debugger.run()
+    except :
+        print 'WARNING! pydbg can not attach to this process ,maybe you attach to a 64-bit process ,pydbg jut support attach to 32-bit process!'
+        

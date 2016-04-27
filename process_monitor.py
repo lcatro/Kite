@@ -12,7 +12,7 @@ BROWSER_PID=0
 debugger=None
 
 def create_process(process_path) :
-    return win32process.CreateProcess(None, process_path, None , None , 0 ,win32process. CREATE_NO_WINDOW , None , None ,win32process.STARTUPINFO())
+    return win32process.CreateProcess(None,process_path,None,None,0,win32process.CREATE_NO_WINDOW,None,None,win32process.STARTUPINFO())
 
 def get_browser_name() :
     return BROWSER_PATH[BROWSER_PATH.rfind('\\')+1:-1]  #  -1 will filter the "
@@ -45,11 +45,15 @@ def main() :
     BROWSER_PID=browser_process[2]  #  browser_process[2] === PID
     time.sleep(0.2)
     debugger=pydbg.pydbg()
-    debugger.attach(BROWSER_PID)    #  get_sub_process(BROWSER_PID)[0])
-    debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,dump_process_and_restart)
-    debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,dump_process_and_restart)
-    debugger.run()
-    win32event.WaitForSingleObject(browser_process[0],-1)  #  browser_process[0] === Process Handle
+    try :
+        debugger.attach(BROWSER_PID)    #  get_sub_process(BROWSER_PID)[0])
+        debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,dump_process_and_restart)
+        debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,dump_process_and_restart)
+        debugger.run()
+        win32event.WaitForSingleObject(browser_process[0],-1)  #  browser_process[0] === Process Handle
+    except :
+        print 'WARNING! pydbg can not attach to this process ,maybe you attach to a 64-bit process ,pydbg jut support attach to 32-bit process!'
+        exit()
     
 if __name__=='__main__' :
     main()
