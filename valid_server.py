@@ -32,8 +32,8 @@ class PocHandler(tornado.web.RequestHandler):
                 global file_count
                 global file_list
                 if file_count>0 :
-                    print str(int(data)),CONFIG_POC_PATH+'\\'+file_list[int(data)]
-                    file_poc=open(CONFIG_EXPLOIT_PATH+'\\'+file_list[int(data)]);
+                    print str(int(data)),file_list[int(data)]
+                    file_poc=open(file_list[int(data)]);
                     if file_poc :
                         self.write(file_poc.read().encode('utf-8'))
                         file_poc.close()
@@ -58,7 +58,7 @@ def flash_file_list(file_path,file_extansion_name) :
     for file_name in os.listdir(file_path):
         if file_name.find(file_extansion_name)>0 :
             file_count+=1
-            file_list.append(file_name)
+            file_list.append(file_path+'\\'+file_name)
     print 'Add '+str(file_count)+' Files - Path:'+file_path
     
 if __name__=='__main__' :
