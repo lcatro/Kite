@@ -8,10 +8,10 @@ import win32event
 import win32process
 
 BASE_DIR=os.path.dirname(__file__)
-BROWSER_PATH="C:\\Program Files (x86)\\Internet Explorer\\iexplore.exe"#'C:\\Program Files\\Internet Explorer\\iexplore.exe'
+BROWSER_PATH='C:\\Program Files\\Internet Explorer\\iexplore.exe'
 BROWSER_PID=0
 DUMP_DATA_LENGTH=128
-EXCEPTION_STACK_OVEWFLOW=0xC00000FD
+EXCEPTION_STACK_OVERFLOW=0xC00000FD
 EXPLOIT_OUTPUT_PATH=BASE_DIR+'\\exploit'
 POC_COUNT_URL='http://127.0.0.1/poc?all'
 POC_URL='http://127.0.0.1/poc?'
@@ -45,8 +45,17 @@ def get_instruction(self,address) :
         else :
             print '  Add:'+str(hex(ins[0]))[:-1]+'-'+ins[1]
     
-def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
-    print 'WARNING! Exploit:',str(hex(EIP))[:-1],instruction,'\n'
+def get_exception(EXCEPTION) :
+    if EXCEPTION==EXCEPTION_STACK_OVERFLOW :
+        return 'EXCEPTION_STACK_OVERFLOW'
+    elif EXCEPTION==pydbg.defines.EXCEPTION_ACCESS_VIOLATION :
+        return 'EXCEPTION_ACCESS_VIOLATION'
+    elif EXCEPTION==pydbg.defines.EXCEPTION_GUARD_PAGE :
+        return 'EXCEPTION_GUARD_PAGE'
+    return 'Unknow Exception!'
+    
+def dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
+    print 'WARNING! Exploit:',get_exception(EXCEPTION),str(hex(EIP))[:-1],instruction,'\n'
     get_instruction(self,EIP)
     print ''
     print 'EAX:'+str(hex(EAX))[:-1],'EBX:'+str(hex(EBX))[:-1],'ECX:'+str(hex(ECX))[:-1],'EDX:'+str(hex(EDX))[:-1],'ESP:'+str(hex(ESP))[:-1],'EBP:'+str(hex(EBP))[:-1],'ESI:'+str(hex(ESI))[:-1],'EDI:'+str(hex(EDI))[:-1]
@@ -80,7 +89,7 @@ def debug_send(debug_string) :
     sock.sendto(debug_string,('127.0.0.1',10086))
     sock.close()
     
-def crash_recall_access_violation(self) :
+def check_valueble_crash(self,EXCEPTION) :
     EIP=self.get_register('EIP')
     EAX=self.get_register('EAX')
     EBX=self.get_register('EBX')
@@ -95,31 +104,42 @@ def crash_recall_access_violation(self) :
     output=''
 #    for ins in self.disasm_around(EIP,10) :
 #        output+='Add:'+str(ins[0])+'-'+ins[1]+'\r'
-    output+='index:'+str(exploit_index)+' addr:'+str(hex(EIP))[:-1]+'-'+instruction
+    output+='index:'+str(exploit_index)+' addr:'+str(hex(EIP))[:-1]+'-'+instruction+' Except:'+get_exception(EXCEPTION)
     debug_send(output)
         
     if 'call'==instruction[0:4] :
-        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+        dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
     elif 'mov'==instruction[0:3] :
-        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+        dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
     elif 'pop'==instruction[0:3] :
-        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+        dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
     elif 'push'==instruction[0:4] :
-        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+        dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+    elif EXCETION==EXCEPTION_STACK_OVERFLOW :
+        dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
 #    else :
 #        print 'None'
     restart_process(self)
 
 def crash_recall_guard_page(self) :
-    crash_recall_access_violation(self)
+    check_valueble_crash(self,pydbg.defines.EXCEPTION_GUARD_PAGE)
+    
+def crash_recall_access_violation(self) :
+    check_valueble_crash(self,pydbg.defines.EXCEPTION_ACCESS_VIOLATION)
+    
+def crash_recall_exit_process(self) :
+    check_valueble_crash(self,pydbg.defines.EXIT_PROCESS_DEBUG_EVENT)
+    
+def crash_recall_stack_overflow(self) :
+    check_valueble_crash(self,EXCEPTION_STACK_OVERFLOW)
     
 if __name__=='__main__' :
     poc_count=int(requests.get(POC_COUNT_URL).text)
     debugger=pydbg.pydbg()
     debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,crash_recall_access_violation)
     debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,crash_recall_guard_page)
-    debugger.set_callback(pydbg.defines.EXIT_PROCESS_DEBUG_EVENT,restart_process)
-    debugger.set_callback(EXCEPTION_STACK_OVEWFLOW,crash_recall_access_violation)
+    debugger.set_callback(pydbg.defines.EXIT_PROCESS_DEBUG_EVENT,crash_recall_exit_process)
+    debugger.set_callback(EXCEPTION_STACK_OVERFLOW,crash_recall_stack_overflow)
     
     browser_process=None
     if len(sys.argv)==3 and str.isdigit(sys.argv[1]) and sys.argv[2]=='debug' :
