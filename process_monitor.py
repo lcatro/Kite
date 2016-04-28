@@ -5,7 +5,7 @@ import time
 import win32event
 import win32process
 
-BROWSER_PATH='"C:\Program Files\Internet Explorer\iexplore.exe"'
+BROWSER_PATH='"C:\\Program Files\\Internet Explorer\\iexplore.exe"'
 BROWSER_ARG_LIST=''
 FUZZING_URL='http://127.0.0.1/vector'
 EXCEPTION_STACK_OVEWFLOW=0xC00000FD
