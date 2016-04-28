@@ -60,17 +60,20 @@ def dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction) :
         print 'Easy Debug Viewer:'
         print 'command:-r %regesit% (look regesit) ;-a %address% (look memory address) ;-u %address% (get instruction) ;-quit (will exit)'
         while True :
-            command=raw_input('->')
-            if command[:2]=='-r' :
-                print str(hex(self.get_register(str.upper(command[3:]))))[:-1]
-            elif command[:2]=='-a' and str.isdigit(command[3:]) :
-                dump_data=self.read(eval(command[3:]),DUMP_DATA_LENGTH)
-                print format_output(dump_data)
-                print dump_data
-            elif command[:2]=='-u' and str.isdigit(command[3:]) :
-                get_instruction(self,eval(command[3:]))
-            elif command[:5]=='-quit' :
-                break
+            try :
+                command=raw_input('->')
+                if command[:2]=='-r' :
+                    print str(hex(self.get_register(str.upper(command[3:]))))[:-1]
+                elif command[:2]=='-a' :
+                    dump_data=self.read(eval(command[3:]),DUMP_DATA_LENGTH)
+                    print format_output(dump_data)
+                    print dump_data
+                elif command[:2]=='-u' :
+                    get_instruction(self,eval(command[3:]))
+                elif command[:5]=='-quit' :
+                    break
+            except :
+                print 'Making a Except may input a error data'
     
 def debug_send(debug_string) :
     sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -100,6 +103,8 @@ def crash_recall_access_violation(self) :
     elif 'mov'==instruction[0:3] :
         dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
     elif 'pop'==instruction[0:3] :
+        dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
+    elif 'push'==instruction[0:4] :
         dump_crash(self,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
 #    else :
 #        print 'None'
