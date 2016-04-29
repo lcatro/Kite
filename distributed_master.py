@@ -88,15 +88,18 @@ class packet() :
 def get_local_ip() :
     return socket.gethostbyname_ex(socket.gethostname())[2][0]  #  local machine ip ,not is VM machine ip
     
+def valid_command(defind_command_string,recv_command_string) :
+    return defind_command_string==recv_command_string[:len(defind_command_string)]
+    
 class distributed_master() :
     def __init__(self) :
         self.broadcast=broadcast()
         
     def __background_server_slave_thread(sock) :
-        data=sock.recv()
-        if data=='-update' :
+        data=sock.recv()  ##  WARNING! it will call distributed_master.recv() ,but why ?..
+        if data==COMMAND_UPDATE :
             sock.send('{\'state\',\'OK!\'}')
-        elif data=='-upload' :
+        elif data==COMMAND_UPLOAD :
             sock.send('OK')
         
     def __background_server_thread(self) :
@@ -105,24 +108,27 @@ class distributed_master() :
         self.sock.listen(10)  #  support more fuzzing slave
         while True :
             client,client_address=self.sock.accept()
-            client_thread=thread.Thread(target=self.__background_server_slave_thread,args=(client))
+            client_thread=thread.Thread(target=__background_server_slave_thread,args=(client))
             client_thread.start()
     
     def __background_server_discover_thread(self) :
         while True :
             data=packet()
-            data.resolve(self.broadcast.recv())
+            data.resolve(self.recv())
             if not data.get_master() :
-                if data.get_slave_command()=='-discover' :
+                if valid_command(COMMAND_DISCOVER,data.get_slave_command()) :
                     responed=packet()
                     responed.set_master()
-                    responed.set_slave_command('')
-                    self.send('-discover '+get_local_ip())
+                    responed.set_slave_command(COMMAND_DISCOVER+' '+get_local_ip())
+                    self.broadcast.send(responed.tostring())
     
     def run(self) :
-        self.trance_thread=threading.Thread(target=self.__background_server_slave_thread)
+        self.trance_thread=threading.Thread(target=self.__background_server_thread)
+        self.trance_thread.setDaemon(True)
         self.trance_thread.start()
+        
         self.discover_thread=threading.Thread(target=self.__background_server_discover_thread)
+        self.discover_thread.setDaemon(True)
         self.discover_thread.start()
         
     def exit(self) :
@@ -138,10 +144,9 @@ if __name__=='__main__' :
     distributed_master_=distributed_master()
     distributed_master_.run()
     while True :
-#        print '->'
-        command=input('->');
+        command=raw_input('->');
         if command=='-quit' :
-            exit()  #  WARNING! Thread has no set demond
+            exit()
         send_data=packet()
         send_data.set_master()
         send_data.set_slave_command(command)
