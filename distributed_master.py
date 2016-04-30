@@ -18,10 +18,10 @@ class broadcast() :
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
         sock.bind(MULTICAST_LOCAL_ADDRESS)
         self.sock=sock
-
+        
     def send(self,data) :
-        mutex=threading.Lock()
-        if mutex.acquire() :  #  TIPS : lock this for safe the buffer of send()
+        mutex=threading.Lock()  #  TIPS : lock this for safe the buffer of send() and recv()
+        if mutex.acquire():
             self.sock.sendto(data,MULTICAST_ADDRESS)
             mutex.release()
         
@@ -91,6 +91,9 @@ def get_local_ip() :
 def valid_command(defind_command_string,recv_command_string) :
     return defind_command_string==recv_command_string[:len(defind_command_string)]
     
+def split_command_data(recv_command_string) :
+    return recv_command_string[recv_command_string.find(' ')+1:]
+    
 class distributed_master() :
     def __init__(self) :
         self.broadcast=broadcast()
@@ -111,23 +114,27 @@ class distributed_master() :
             client_thread=thread.Thread(target=__background_server_slave_thread,args=(client))
             client_thread.start()
     
-    def __background_server_discover_thread(self) :
+    def __background_server_broadcast_thread(self) :
         while True :
             data=packet()
             data.resolve(self.recv())
             if not data.get_master() :
-                if valid_command(COMMAND_DISCOVER,data.get_slave_command()) :
-                    responed=packet()
-                    responed.set_master()
+                command=data.get_slave_command()
+                responed=packet()
+                responed.set_master()
+                if valid_command(COMMAND_DISCOVER,command) :
                     responed.set_slave_command(COMMAND_DISCOVER+' '+get_local_ip())
-                    self.broadcast.send(responed.tostring())
+                    self.send(responed.tostring())
+                elif valid_command(COMMAND_REPORT,command) :
+                    slave_report_data=eval(split_command_data(command))
+                    print slave_report_data
     
     def run(self) :
         self.trance_thread=threading.Thread(target=self.__background_server_thread)
         self.trance_thread.setDaemon(True)
         self.trance_thread.start()
         
-        self.discover_thread=threading.Thread(target=self.__background_server_discover_thread)
+        self.discover_thread=threading.Thread(target=self.__background_server_broadcast_thread)
         self.discover_thread.setDaemon(True)
         self.discover_thread.start()
         

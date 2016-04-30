@@ -11,6 +11,8 @@ import tornado.ioloop
 BASE_DIR=os.path.dirname(__file__)
 CONFIG_POC_PATH=BASE_DIR+'\\poc'
 CONFIG_EXPLOIT_PATH=BASE_DIR+'\\exploit'
+EXTANSION_NAME_POC='.poc.html'
+EXTANSION_NAME_EXPLOIT='.exploit.html'
 
 file_count=0
 file_list=[]
@@ -64,8 +66,8 @@ def flash_file_list(file_path,file_extansion_name) :
 if __name__=='__main__' :
     print 'Server Running'
     if len(sys.argv)==2 and sys.argv[1]=='debug' :
-        flash_file_list(CONFIG_EXPLOIT_PATH,'.exploit.html')
+        flash_file_list(CONFIG_EXPLOIT_PATH,EXTANSION_NAME_EXPLOIT)
     else :
-        flash_file_list(CONFIG_POC_PATH,'.poc.html')
+        flash_file_list(CONFIG_POC_PATH,EXTANSION_NAME_POC)
     listen(80)
     
