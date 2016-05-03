@@ -86,10 +86,7 @@ class distributed_slave() :
             return path
         return os.path.dirname(path)
         
-    def get_master_ip(self) :  #  WARNING !!! it will make a bug ,broadcast can not recv command 
-                               #  because Thread __background_server_report_thread will call recv()
-                               #  so discover data will trace to __background_server_report_thread not this
-                               #  it is a probleam about thread lock()
+    def get_master_ip(self) :
         packet_data=packet()
         packet_data.set_slave()
         packet_data.set_slave_command(COMMAND_DISCOVER)
@@ -107,7 +104,7 @@ class distributed_slave() :
     def __background_server_upload(self) :
         file_count=0
         file_list=[]
-        for file_name in os.listdir(CONFIG_POC_PATH):
+        for file_name in os.listdir(CONFIG_POC_PATH) :
             if file_name.find(EXTANSION_NAME_POC)>0 :
                 file_count+=1
                 file_path=CONFIG_POC_PATH+'\\'+file_name
@@ -118,6 +115,7 @@ class distributed_slave() :
                     file_index.append(file_data.read())
                     file_data.close()
                     file_list.append(file_index)
+                os.remove(file_path)
         trance_data=COMMAND_UPLOAD+' '+str(file_list)
         master_ip=self.get_master_ip()
         tcp_client_=tcp_client(master_ip)
@@ -139,19 +137,15 @@ class distributed_slave() :
         tcp_client_.send(COMMAND_UPDATE)
         recv_data=tcp_client_.recv()
         try :
-            '''
             update_file_list=eval(recv_data)
             for update_file_index in update_file_list :
                 update_path=BASE_DIR+'\\'+update_file_index[0]
-                if os.path.exists(update_path) :
-                    update_file=open(update_path,'w')
-                    if update_file :
-                        update_file.write(update_file_index[1])
-                        update_file.close()
-                        if distributed_slave.close_target_python_script(update_file_index) :
-                            os.system(update_file_index)
-            '''
-            print recv_data
+                update_file=open(update_path,'w')
+                if update_file :
+                    update_file.write(update_file_index[1])
+                    update_file.close()
+                    if distributed_slave.close_target_python_script(update_file_index) :
+                        os.system(update_file_index)
         except :
             print 'update ERROR!..'
         tcp_client_.close()

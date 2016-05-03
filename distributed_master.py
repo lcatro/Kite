@@ -2,11 +2,14 @@
 import socket
 import threading
 
+from valid_server import *
+
 COMMAND_DISCOVER='-discover'
 COMMAND_REPORT='-report'
 COMMAND_UPDATE='-update'
 COMMAND_UPLOAD='-upload'
 DATA_LENGTH=1024*100
+EXTANSION_NAME_PY='.py'
 MULTICAST_ADDRESS=('255.255.255.255',12345)
 MULTICAST_LOCAL_ADDRESS=('0.0.0.0',12345)
 TCP_PORT=12346
@@ -99,11 +102,21 @@ class distributed_master() :
         self.broadcast=broadcast()
         
     def __background_server_slave_thread(self,sock) :
-        #data=sock.recv(len(COMMAND_UPDATE)+1)  ##  WARNING! it will call distributed_master.recv() ,but why ?..
-        #data=data[:-1]
         data=sock.recv(len(COMMAND_UPDATE))
         if data==COMMAND_UPDATE :
-            sock.send('{\'state\',\'OK!\'}')
+            file_list=[]
+            for file_name in os.listdir(BASE_DIR) :
+                if file_name.find(EXTANSION_NAME_PY)>0 :
+                    file_data=''
+                    file_=open(BASE_DIR+'\\'+file_name,'r')
+                    if file_ :
+                        file_data=file_.read()
+                        file_.close()
+                        file_index=[]
+                        file_index.append(file_name)
+                        file_index.append(file_data)
+                        file_list.append(file_index)
+            sock.send(str(file_list))
         elif data==COMMAND_UPLOAD :
             file_data=''
             while True :
@@ -112,7 +125,15 @@ class distributed_master() :
                     file_data+=recv_data
                 else :
                     break
-            sock.send('OK')
+            file_list=eval(file_data)
+            for file_index in file_data :
+                file_name=file_index[0]
+                file_data=file_index[1]
+                file_=open(CONFIG_POC_PATH+'\\'+file_name,'w')
+                if file_ :
+                    file_.write(file_data)
+                    file_.close()
+        sock.close()
         
     def __background_server_thread(self) :
         self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
