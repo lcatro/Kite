@@ -58,13 +58,17 @@ def poc_file_count() :
             file_count+=1
     return file_count
 
+class thread_critical_section() :
+    def __init__(self) :
+        pass
+
 class tcp_client() :
     def __init__(self,dest_address) :
         self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.sock.connect((dest_address,TCP_PORT))
         
     def send(self,data) :
-        self.sock.send(data)
+        self.sock.sendall(data)
         
     def recv(self) :
         return self.sock.recv(DATA_LENGTH)
@@ -100,28 +104,57 @@ class distributed_slave() :
                 return split_command_data(command)
         return ''
         
-    def __background_server_upload_thread(self) :
-        mutex=threading.Lock()
-        if mutex.acquire() :
-            file_count=0
-            file_list=[]
-            for file_name in os.listdir(BASE_DIR):
-                if file_name.find(EXTANSION_NAME_POC)>0 :
-                    file_count+=1
-                    file_path=dir_path+'\\'+file_name
-                    file_data=open(file_path)
-                    if file_data :
-                        file_index=[]
-                        file_index.append(file_path)
-                        file_index.append(file_data.read())
-                        file_data.close()
-                        file_list.append(file_index)
-            trance_data=COMMAND_UPLOAD+' '+str(file_list)
-            master_ip=self.get_master_ip()
-            tcp_client_=tcp_client(master_ip)
-            tcp_client_.send(trance_data)
-            tcp_client_.close()
-            mutex.release()
+    def __background_server_upload(self) :
+        file_count=0
+        file_list=[]
+        for file_name in os.listdir(CONFIG_POC_PATH):
+            if file_name.find(EXTANSION_NAME_POC)>0 :
+                file_count+=1
+                file_path=CONFIG_POC_PATH+'\\'+file_name
+                file_data=open(file_path)
+                if file_data :
+                    file_index=[]
+                    file_index.append(file_path)
+                    file_index.append(file_data.read())
+                    file_data.close()
+                    file_list.append(file_index)
+        trance_data=COMMAND_UPLOAD+' '+str(file_list)
+        master_ip=self.get_master_ip()
+        tcp_client_=tcp_client(master_ip)
+        tcp_client_.send(trance_data)
+        tcp_client_.close()
+
+    def close_target_python_script(script_name) :
+        for pid_index in psutil.pids() :
+            process=psutil.Process(pid_index)
+            command_line=process.cmdline()
+            if not command_line.find(script_name)==-1 :
+                pid_index.terminate()
+                return True
+        return False
+        
+    def __background_server_update(self) :
+        master_ip=self.get_master_ip()
+        tcp_client_=tcp_client(master_ip)
+        tcp_client_.send(COMMAND_UPDATE)
+        recv_data=tcp_client_.recv()
+        try :
+            '''
+            update_file_list=eval(recv_data)
+            for update_file_index in update_file_list :
+                update_path=BASE_DIR+'\\'+update_file_index[0]
+                if os.path.exists(update_path) :
+                    update_file=open(update_path,'w')
+                    if update_file :
+                        update_file.write(update_file_index[1])
+                        update_file.close()
+                        if distributed_slave.close_target_python_script(update_file_index) :
+                            os.system(update_file_index)
+            '''
+            print recv_data
+        except :
+            print 'update ERROR!..'
+        tcp_client_.close()
         
     def __background_server_thread(self) :
         while True :
@@ -130,10 +163,9 @@ class distributed_slave() :
             if data_packet.get_master() :
                 command=data_packet.get_slave_command()
                 if valid_command(COMMAND_UPDATE,command) :
-                    upload_thread=threading.Thread(target=self.__background_server_upload_thread)
-                    upload_thread.start()
+                    self.__background_server_update()
                 elif valid_command(COMMAND_UPLOAD,command) :
-                    pass
+                    self.__background_server_upload()
         
     def __background_server_report_thread(self) :
         while True :
@@ -156,7 +188,6 @@ class distributed_slave() :
         
 if __name__=='__main__' :
     distributed_slave_=distributed_slave()
-    print distributed_slave_.get_master_ip()
     distributed_slave_.run()
     print 'Distributed Slave Will Exit!'
     

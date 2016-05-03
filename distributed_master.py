@@ -6,11 +6,20 @@ COMMAND_DISCOVER='-discover'
 COMMAND_REPORT='-report'
 COMMAND_UPDATE='-update'
 COMMAND_UPLOAD='-upload'
-DATA_LENGTH=1024
+DATA_LENGTH=1024*100
 MULTICAST_ADDRESS=('255.255.255.255',12345)
 MULTICAST_LOCAL_ADDRESS=('0.0.0.0',12345)
 TCP_PORT=12346
 
+def get_local_ip() :
+    return socket.gethostbyname_ex(socket.gethostname())[2][0]  #  local machine ip ,not is VM machine ip
+    
+def valid_command(defind_command_string,recv_command_string) :
+    return defind_command_string==recv_command_string[:len(defind_command_string)]
+    
+def split_command_data(recv_command_string) :
+    return recv_command_string[recv_command_string.find(' ')+1:]
+    
 class broadcast() :
     def __init__(self) :
         sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -85,24 +94,24 @@ class packet() :
         packet_data+=self.command
         return packet_data
 
-def get_local_ip() :
-    return socket.gethostbyname_ex(socket.gethostname())[2][0]  #  local machine ip ,not is VM machine ip
-    
-def valid_command(defind_command_string,recv_command_string) :
-    return defind_command_string==recv_command_string[:len(defind_command_string)]
-    
-def split_command_data(recv_command_string) :
-    return recv_command_string[recv_command_string.find(' ')+1:]
-    
 class distributed_master() :
     def __init__(self) :
         self.broadcast=broadcast()
         
-    def __background_server_slave_thread(sock) :
-        data=sock.recv()  ##  WARNING! it will call distributed_master.recv() ,but why ?..
+    def __background_server_slave_thread(self,sock) :
+        #data=sock.recv(len(COMMAND_UPDATE)+1)  ##  WARNING! it will call distributed_master.recv() ,but why ?..
+        #data=data[:-1]
+        data=sock.recv(len(COMMAND_UPDATE))
         if data==COMMAND_UPDATE :
             sock.send('{\'state\',\'OK!\'}')
         elif data==COMMAND_UPLOAD :
+            file_data=''
+            while True :
+                recv_data=sock.recv(DATA_LENGTH)
+                if not len(recv_data)==0 :
+                    file_data+=recv_data
+                else :
+                    break
             sock.send('OK')
         
     def __background_server_thread(self) :
@@ -111,7 +120,7 @@ class distributed_master() :
         self.sock.listen(10)  #  support more fuzzing slave
         while True :
             client,client_address=self.sock.accept()
-            client_thread=thread.Thread(target=__background_server_slave_thread,args=(client))
+            client_thread=threading.Thread(target=self.__background_server_slave_thread,args=(client,))
             client_thread.start()
     
     def __background_server_broadcast_thread(self) :
