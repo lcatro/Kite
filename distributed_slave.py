@@ -122,20 +122,30 @@ class distributed_slave() :
         tcp_client_.send(trance_data)
         tcp_client_.close()
 
-    def close_target_python_script(script_name) :
+    def close_target_python_script(self,script_name) :
         for pid_index in psutil.pids() :
-            process=psutil.Process(pid_index)
-            command_line=process.cmdline()
-            if not command_line.find(script_name)==-1 :
-                pid_index.terminate()
-                return True
+            try :
+                process=psutil.Process(pid_index)
+                command_line=process.cmdline()
+                if len(command_line)>=2 :
+                    if not command_line[1].find(script_name)==-1 :
+                        os.kill(pid_index,9)
+                        return True
+            except :
+                pass
         return False
         
     def __background_server_update(self) :
         master_ip=self.get_master_ip()
         tcp_client_=tcp_client(master_ip)
         tcp_client_.send(COMMAND_UPDATE)
-        recv_data=tcp_client_.recv()
+        recv_data=''
+        while True :
+            recv_data_block=tcp_client_.recv()
+            if not len(recv_data_block)==0 :
+                recv_data+=recv_data_block
+            else :
+                break
         try :
             update_file_list=eval(recv_data)
             for update_file_index in update_file_list :
@@ -144,8 +154,8 @@ class distributed_slave() :
                 if update_file :
                     update_file.write(update_file_index[1])
                     update_file.close()
-                    if distributed_slave.close_target_python_script(update_file_index) :
-                        os.system(update_file_index)
+                    if self.close_target_python_script(update_file_index[0]) :
+                        os.system(update_path)
         except :
             print 'update ERROR!..'
         tcp_client_.close()

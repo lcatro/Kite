@@ -1,4 +1,5 @@
 
+import psutil
 import socket
 import threading
 
@@ -39,6 +40,7 @@ class broadcast() :
         
     def recv(self) :
         data,addr=self.sock.recvfrom(DATA_LENGTH)
+        print data
         return data
 
 class packet() :
