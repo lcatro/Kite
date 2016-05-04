@@ -115,7 +115,7 @@ def check_valueble_crash(self,EXCEPTION) :
         dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
     elif 'push'==instruction[0:4] :
         dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
-    elif EXCETION==EXCEPTION_STACK_OVERFLOW :
+    elif EXCEPTION==EXCEPTION_STACK_OVERFLOW :
         dump_crash(self,EXCEPTION,EIP,EAX,EBX,ECX,EDX,ESP,EBP,ESI,EDI,instruction)
 #    else :
 #        print 'None'
