@@ -115,7 +115,7 @@ class distributed_slave() :
                     file_index.append(file_data.read())
                     file_data.close()
                     file_list.append(file_index)
-                os.remove(file_path)
+#                os.remove(file_path)
         trance_data=COMMAND_UPLOAD+' '+str(file_list)
         master_ip=self.get_master_ip()
         tcp_client_=tcp_client(master_ip)
