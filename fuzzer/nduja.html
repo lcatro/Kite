@@ -259,7 +259,7 @@ elements = [
 
 var mor_array = %MOR_ARRAY% ;
 var mor_index = %MOR_INDEX% ;
-//turn_on_log var log_url = %log_url%;
+//turn_on_log var log_url = "%log_url%";
 
 function XHR() {
     var xhr;
@@ -276,7 +276,7 @@ function XHR() {
 
 function log(execute_log) {
     if (typeof log_url!='undefined') {
-       var xhr=XHR();
+        var xhr=XHR();
         xhr.open('get',log_url+'log='+execute_log,false);
         xhr.send(null);
     } else
@@ -310,7 +310,7 @@ function rand_item( arr )
 }
 // End random	
 
-function initialize(elem){
+function initialize(elem,element_tree_index){
 	
 	try{
 		currElem=findInTree(elem);
@@ -320,8 +320,11 @@ function initialize(elem){
 			ri=rand_item(events);
 			//alert(r);
 			rndb=RBool();
-			elem.addEventListener (ri, modifyDOM, rndb);	
-
+			elem.addEventListener (ri, modifyDOM, rndb);
+            if (typeof element_tree_index!='undefine')
+                log('try{elementTree1['+element_tree_index+'].addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
+            else
+                log('try{'+elem.tagName+'.addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
 		}
 	}	
 	catch (exception) { 
@@ -338,6 +341,7 @@ function removeListeners(elem){
 			rndb=RBool();
 			//alert(r);
 			elem.removeEventListener (ri, modifyDOM, rndb);	
+            log('try{'+elem.tagName+'.addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
 
 
 			}
@@ -361,7 +365,7 @@ function findInTree(elem){
 }
 
 function modifyDOM(event){
-	
+	try {
 		switch (event.eventPhase) {
 		case Event.CAPTURING_PHASE:
 			removeListeners(event.currentTarget);
@@ -459,7 +463,9 @@ function modifyDOM(event){
 
 			break;
 		}
-	
+    } catch (e) {
+        
+    }
 }
 	
 function insertSubTree(){
@@ -470,9 +476,11 @@ function insertSubTree(){
 			
 			r=rand_item( elements );
 			elementTree2[h]=document.createElement(r);
+            log('elementTree2['+h+']=document.createElement("'+r+'");');
 			//alert(r);
 			rb=R(document.all.length);
 			document.all[rb].appendChild(elementTree2[h]);
+            log('document.all['+rb+'.appendChild(elementTree2['+h+']);');
 			//eventManage(elementTree2[j],j);
 			
 		}	
@@ -498,15 +506,15 @@ function buildDoc1(){
 function createTxtRange(){
 	try{
 		range2 = document.body.createTextRange();
-        log('range2 = document.body.createTextRange()');
+        log('range2=document.body.createTextRange();');
 		r2=R(document.body.all.length);
 		startNode=document.body.all[r2];
-        log('startNode=document.body.all['+r2+']');
+        log('startNode=document.body.all['+r2+'];');
 		range2.moveToElementText(startNode);
-        log('range2.moveToElementText('+startNode+')');
+        log('range2.moveToElementText('+startNode+');');
 		shift=R(20);			
 		range2.moveEnd("character", shift);
-        log('range2.moveEnd("character",'+shift+')');
+        log('range2.moveEnd("character",'+shift+');');
 
 	}	
 	catch (exception) {
@@ -516,17 +524,17 @@ function createTxtRange(){
 function createElemRange1(){
 	try{
 		range1 = document.createRange();
-        log('range1 = document.createRange()');
+        log('range1 = document.createRange();');
 		r1=R(document.all.length);
 		startNode=document.all[r1];
-        log('startNode=document.all['+r1+']');
+        log('startNode=document.all['+r1+'];');
 		range1.setStart(startNode, 0);
-        log('range1.setStart('+startNode+', 0)');
+        log('range1.setStart('+startNode+', 0);');
 		r2=R(document.all.length);
 		endNode=document.all[r2];
-        log('endNode=document.all['+r2+']');
+        log('endNode=document.all['+r2+'];');
 		range1.setEnd(endNode, 0);
-        log('range1.setEnd('+endNode+', 0)');
+        log('range1.setEnd('+endNode+', 0);');
 		//alert("range created");
 	}
 	catch (exception) {
@@ -536,17 +544,17 @@ function createElemRange1(){
 function createElemRange(){
 	try{
 		range = document.createRange();
-        log('range = document.createRange()');
+        log('range=document.createRange();');
 		r1=R(document.all.length);
 		startNode=document.all[r1];
-        log('startNode=document.all['+r1+']');
+        log('startNode=document.all['+r1+'];');
 		range.setStart(startNode, 0);
-        log('range.setStart('+startNode+', 0)');
+        log('range.setStart('+startNode+',0);');
 		r2=R(document.all.length);
 		endNode=document.all[r2];
-        log('endNode=document.all['+r2+']');
+        log('endNode=document.all['+r2+'];');
 		range.setEnd(endNode, 0);
-        log('range.setEnd('+endNode+', 0)');
+        log('range.setEnd('+endNode+',0);');
 		
 	}
 	catch (exception) {
@@ -558,7 +566,7 @@ function createTagAggregation1(){
 		try{
 		index=R(elementTree1.length);
 		tagAggregation1 = document.getElementsByTagName(elementTree1[index].tagName);
-        log('tagAggregation1 = document.getElementsByTagName(elementTree1['+index+'].tagName)');
+        log('tagAggregation1 = document.getElementsByTagName(elementTree1['+index+'].tagName);');
 		}
 		catch (exception) {
 		}
@@ -569,7 +577,7 @@ function createTreeWalker(){
 		rb=R(document.all.length);
 		randRoot=document.all[rb];
 		tw = document.createTreeWalker(document.all[randRoot], NodeFilter.SHOW_ALL, ElementChecker, false);
-        log('tw = document.createTreeWalker(document.all[document.all['+rb+']], NodeFilter.SHOW_ALL, ElementChecker, false);');
+        log('tw=document.createTreeWalker(document.all[document.all['+rb+']],NodeFilter.SHOW_ALL,ElementChecker,false);');
 		}
 		catch (exception) {
 		}
@@ -580,7 +588,7 @@ function createNodeIterator(){
 		rb=R(document.all.length);
 		randRoot=document.all[rb];
 		ni = document.createNodeIterator(document.all[randRoot], NodeFilter.SHOW_ALL, ElementChecker, false);
-        log('tw = document.createNodeIterator(document.all[document.all['+rb+']], NodeFilter.SHOW_ALL, ElementChecker, false);');
+        log('tw=document.createNodeIterator(document.all[document.all['+rb+']],NodeFilter.SHOW_ALL,ElementChecker,false);');
 		}
 		catch (exception) {
 		}
@@ -626,29 +634,29 @@ function buildElementsTree1(){
 		//clobber=[];
 		if(document.createStyleSheet){
 			styleSheet1 = document.createStyleSheet ("");
-            log("styleSheet1 = document.createStyleSheet ('');");
+            log("styleSheet1=document.createStyleSheet('');");
 		}
 		else { 
 			styleSheet1=document.createElement('link'); 
-            log("styleSheet1 = document.createElement ('link');");
+            log("styleSheet1=document.createElement('link');");
 			styleSheet1.rel='stylesheet'; 
             log("styleSheet1.rel='stylesheet';");
 			document.body.appendChild(styleSheet1); 
-            log("document.body.appendChild(styleSheet1); ");
+            log("document.body.appendChild(styleSheet1);");
 		} 
 		for (k=0;k<MAXELEM;k++){
 			
 			r=rand_item( elements );
 			elementTree1[k]=document.createElement(r);
-            log("elementTree1[k]=document.createElement(r)");
+            log("elementTree1["+k+"]=document.createElement(\""+r+"\");");//elementTree1["+k+"]="+elementTree1[k]);
 			//assegno un id x clobbering
 			elementTree1[k].id="el"+k;
-            log("elementTree1[k].id='el'+k");
+            log("elementTree1["+k+"].id='el'+"+k+";");//elementTree1["+k+"]="+elementTree1[k]);
 			
 			rb=R(document.all.length);
 			document.all[rb].appendChild(elementTree1[k]);
-            log("document.all["+rb+"].appendChild(elementTree1["+k+"])");
-			initialize(elementTree1[k]);
+            log("document.all["+rb+"].appendChild(elementTree1["+k+"]);");//document.all["+rb+"]="+document.all[rb]);
+			initialize(elementTree1[k],k);
 			tweakattributes1(elementTree1[k],k);
 			tweakstyle1(elementTree1[k],k);
 		}
@@ -663,7 +671,8 @@ function tweakElem(elem){
 			
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
-                    log("elem.setAttribute("+p+","+r+")");
+                    if (interesting_vals[11]!=r && interesting_vals[31]!=r)
+                        log("try{"+tagName+".setAttribute("+p+","+r+");}catch(e){}");
 		
 			}
 			
@@ -679,7 +688,8 @@ function tweakattributes1(elem,i){
 			
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
-                    log("elem.setAttribute("+p+","+r+")");
+                    if (interesting_vals[11]!=r && interesting_vals[31]!=r)
+                        log("try{elementTree1["+i+"].setAttribute("+p+","+r+");}catch(e){}");
 			}
 			
 		
@@ -691,7 +701,7 @@ function tweakattributes(elem){
 		for( var p in elem){
 			try {
 				elem.setAttribute(p,"\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141");
-                log("elem.setAttribute("+p+",\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141)");
+                //log("elem.setAttribute("+p+",\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141);");
 			}
 				catch (exception) {
 			}
@@ -718,7 +728,7 @@ function deleteRange1(){
 	try{
 		
 		range1.deleteContents();
-        log("range1.deleteContents()");
+        log("range1.deleteContents();");
 	}
 	catch (exception) {
 	}
@@ -765,47 +775,47 @@ function alterRange(){
 		switch (cmd){
 			case 0:
 				range.deleteContents();
-                log("range2.deleteContents()");
+                log("range2.deleteContents();");
 				break;
 			case 1:
 				range.collapse();
-                log("range2.collapse()");
+                log("range2.collapse();");
 				break;
 			case 2:
 				var documentFragment = range.extractContents();
-                log("var documentFragment = range.extractContents()");
+                log("var documentFragment=range.extractContents();");
 				break;
 			case 3:
 				range.surroundContents(randElem);
-                log("range.surroundContents("+randElem+")");
+                log("range.surroundContents("+randElem+");");
 				break;
 			case 4:	
 				range.selectNode(randElem);
-                log("range.selectNode("+randElem+")");
+                log("range.selectNode("+randElem+");");
 				break;
 			case 5:
 				range.selectNodeContents(randElem);
-                log("range.selectNodeContents("+randElem+")");
+                log("range.selectNodeContents("+randElem+");");
 				break;
 			case 6:
 				range.insertNode(randElem);
-                log("range.insertNode("+randElem+")");
+                log("range.insertNode("+randElem+");");
 				break;
 			case 7:
 				range.setStartAfter(randElem);
-                log("range.setStartAfter("+randElem+")");
+                log("range.setStartAfter("+randElem+");");
 				break;
 			case 8:
 				range.setStartBefore(randElem);
-                log("range.setStartBefore("+randElem+")");
+                log("range.setStartBefore("+randElem+");");
 				break;
 			case 9:
 				range.setEndAfter(randElem);
-                log("range.setEndAfter("+randElem+")");
+                log("range.setEndAfter("+randElem+");");
 				break;						
 			case 10:
 				range.setEndBefore(randElem);
-                log("range.setEndBefore("+randElem+")");
+                log("range.setEndBefore("+randElem+");");
 				break;
 		}		
 		
@@ -822,9 +832,9 @@ function alterTextRange(){
 		cmd=R(commands.length);
 		//alert(cmd)
 		range2.select();
-        log("range2.select()");
+        log("range2.select();");
 		range2.execCommand(commands[cmd],true,null);
-        log("range2.execCommand("+commands[cmd]+",true,null)");
+        log("range2.execCommand("+commands[cmd]+",true,null);");
 	
 	}
 	catch( exception )
@@ -838,7 +848,7 @@ function rulesCrawler1(){
 		for (i=0;i<l;i++){
 			
 			styleSheet1.cssRules[i].style.setAttribute('color','red');
-            log("styleSheet1.cssRules["+i+"].style.setAttribute('color','red')");
+            log("styleSheet1.cssRules["+i+"].style.setAttribute('color','red');");
 		}	
 
 	}
@@ -856,11 +866,11 @@ function moveIterator(){
 			switch(rm){
 				case 0:
 					ni.nextNode();
-                    log("ni.nextNode()");
+                    log("ni.nextNode();");
 					break;
 				case 1:
 					ni.previousNode();
-                    log("ni.previousNode()");
+                    log("ni.previousNode();");
 					break;
 			
 			}
@@ -881,31 +891,31 @@ function moveTreeWalker(){
 			switch(rm){
 				case 0:
 					tw.nextNode();
-                    log("tw.nextNode()");
+                    log("tw.nextNode();");
 					break;
 				case 1:
 					tw.previousNode();
-                    log("tw.previousNode()");
+                    log("tw.previousNode();");
 					break;
 				case 2:
 					tw.previousSibling();
-                    log("tw.previousSibling()");
+                    log("tw.previousSibling();");
 					break;
 				case 3:
 					tw.nextSibling();
-                    log("tw.nextSibling()");
+                    log("tw.nextSibling();");
 					break;
 				case 4:
 					tw.firstChild();
-                    log("tw.firstChild()");
+                    log("tw.firstChild();");
 					break;
 				case 5:
 					tw.lastChild();
-                    log("tw.lastChild()");
+                    log("tw.lastChild();");
 					break;
 				case 6:
 					tw.parentNode();
-                    log("tw.parentNode()");
+                    log("tw.parentNode();");
 					break;	
 			}
 		}	
@@ -966,7 +976,7 @@ function nodeIteration(){
 		while (currentNode!=range.startContainer)  {
 			if (currentNode!=range.startContainer){
 				currentNode = ni.nextNode();
-                log("currentLeaf = ni.nextNode()");
+                log("currentLeaf=ni.nextNode()");
 			}
 		}
 		
@@ -982,7 +992,7 @@ function treeIteration(){
 		while (currentLeaf!=range.startContainer)  {
 			if (currentLeaf!=range.startContainer){
 				currentLeaf = tw.nextNode();
-                log("currentLeaf = tw.nextNode()");
+                log("currentLeaf=tw.nextNode();");
 			}
 		}
 		
@@ -1007,28 +1017,28 @@ function fuzzAttributes(index,orig){
 					try{
 						if (orig=="tree1"){
 
-							eval("elementTree1["+index+"]."+prop+" = null");
-							log("elementTree1["+index+"]."+prop+" = null");
+							eval("elementTree1["+index+"]."+prop+"=null");
+							log("elementTree1["+index+"]."+prop+"=null;");
 
-							eval("document.el"+index+"."+prop+" = null");
-							log("document.el"+index+"."+prop+" = null");
+							eval("document.el"+index+"."+prop+"=null");
+							log("document.el"+index+"."+prop+"=null;");
 						}
 						
 						if (orig=="tag1"){
-							eval("tagAggregation1["+index+"]."+prop+" = null");
-							log("tagAggregation1["+index+"]."+prop+" = null");
+							eval("tagAggregation1["+index+"]."+prop+"=null");
+							log("tagAggregation1["+index+"]."+prop+"=null;");
 
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+prop+" = null");
-							log("currentNode."+prop+" = null");
+							log("currentNode."+prop+" = null;");
 
 							
 						}
 						if (orig=="tw"){
 							eval("currentLeaf."+prop+" = null");
-							log("currentLeaf."+prop+" = null");
+							log("currentLeaf."+prop+" = null;");
 						}
 					}
 					catch (exception){}		
@@ -1038,25 +1048,25 @@ function fuzzAttributes(index,orig){
 					try{
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]."+prop+"()");
-							log("elementTree1["+index+"]."+prop+"()");
+							log("elementTree1["+index+"]."+prop+"();");
 
 							eval("document.el"+index+"."+prop+"()");
-							log("document.el"+index+"."+prop+"()");
+							log("document.el"+index+"."+prop+"();");
 
 						}	
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]."+prop+"()");
-							log("tagAggregator1["+index+"]."+prop+"()");
+							log("tagAggregator1["+index+"]."+prop+"();");
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+prop+"()");
-							log("currentNode."+prop+"()");
+							log("currentNode."+prop+"();");
 						}
 						if (orig=="tw"){
 							eval("currentLeaf."+prop+"()");
-							log("currentLeaf."+prop+"()");
+							log("currentLeaf."+prop+"();");
 						}
 					}
 					catch (exception){}								
@@ -1068,7 +1078,7 @@ function fuzzAttributes(index,orig){
 							eval("elementTree1["+index+"]."+prop+"(elementTree1["+index+"].parentNode);");
 							log("elementTree1["+index+"]."+prop+"(elementTree1["+index+"].parentNode);");
 							eval("document.el"+index+"."+prop+"(document.el"+index+".parentNode");
-							log("document.el"+index+"."+prop+"(document.el"+index+".parentNode");
+							log("document.el"+index+"."+prop+"(document.el"+index+".parentNode;");
 						}
 						
 						if (orig=="tag1"){
@@ -1092,23 +1102,23 @@ function fuzzAttributes(index,orig){
 					try{
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]."+prop+"=elementTree1["+index+"].parentNode."+prop+"");
-							log("elementTree1["+index+"]."+prop+"=elementTree1["+index+"].parentNode."+prop+"");
+							log("elementTree1["+index+"]."+prop+"=elementTree1["+index+"].parentNode."+prop+";");
 							eval("document.el"+index+"."+prop+"(document.el"+index+".parentNode."+prop);
-							log("document.el"+index+"."+prop+"(document.el"+index+".parentNode."+prop);
+							log("document.el"+index+"."+prop+"(document.el"+index+".parentNode."+prop+";");
 						}
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]."+prop+"=tagAggregator1["+index+"].parentNode."+prop+"");
-							log("tagAggregator1["+index+"]."+prop+"=tagAggregator1["+index+"].parentNode."+prop+"");
+							log("tagAggregator1["+index+"]."+prop+"=tagAggregator1["+index+"].parentNode."+prop+";");
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+prop+"=currentNode.parentNode."+prop+"");
-							log("currentNode."+prop+"=currentNode.parentNode."+prop+"");
+							log("currentNode."+prop+"=currentNode.parentNode."+prop+";");
 						}
 						if (orig=="tw") {
 							eval("currentLeaf."+prop+"=currentLeaf.parentNode."+prop+"");
-							log("currentLeaf."+prop+"=currentLeaf.parentNode."+prop+"");
+							log("currentLeaf."+prop+"=currentLeaf.parentNode."+prop+";");
 						}
 					}
 					catch (exception){}								
@@ -1120,23 +1130,23 @@ function fuzzAttributes(index,orig){
 						
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]." + prop + " = "+rv+"");
-							log("elementTree1["+index+"]." + prop + " = "+rv+"");
+							log("elementTree1["+index+"]." + prop + " = "+rv+";");
 							eval("document.el"+index+"." + prop + " = "+rv+"");
-							log("document.el"+index+"." + prop + " = "+rv+"");
+							log("document.el"+index+"." + prop + " = "+rv+";");
 						}
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]." + prop + " = "+rv+"");
-							log("tagAggregator1["+index+"]." + prop + " = "+rv+"");
+							log("tagAggregator1["+index+"]." + prop + " = "+rv+";");
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode." + prop + " = "+rv+"");
-							log("currentNode." + prop + " = "+rv+"");
+							log("currentNode." + prop + " = "+rv+";");
 						}
 						if (orig=="tw") {
 							eval("currentLeaf." + prop + " = "+rv+"");
-							log("currentLeaf." + prop + " = "+rv+"");
+							log("currentLeaf." + prop + " = "+rv+";");
 						}
 					}
 					catch (exception){}
@@ -1148,23 +1158,23 @@ function fuzzAttributes(index,orig){
 						
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]."+ prop + "("+rv+")");
-							log("elementTree1["+index+"]."+ prop + "("+rv+")");
+							log("elementTree1["+index+"]."+ prop + "("+rv+");");
 							eval("document.el"+index+"." + prop + " ("+rv+")");
-							log("document.el"+index+"." + prop + " ("+rv+")");
+							log("document.el"+index+"." + prop + " ("+rv+");");
 						}	
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]."+ prop + "("+rv+")");
-							log("tagAggregator1["+index+"]."+ prop + "("+rv+")");
+							log("tagAggregator1["+index+"]."+ prop + "("+rv+");");
 						}	
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+ prop + "("+rv+")");
-							log("currentNode."+ prop + "("+rv+")");
+							log("currentNode."+ prop + "("+rv+");");
 						}
 						if (orig=="tw") {
 							eval("currentLeaf."+ prop + "("+rv+")");
-							log("currentLeaf."+ prop + "("+rv+")");
+							log("currentLeaf."+ prop + "("+rv+");");
 						}
 					}
 					catch (exception){}		

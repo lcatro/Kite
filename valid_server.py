@@ -36,7 +36,7 @@ class PocHandler(tornado.web.RequestHandler):
                 global file_list
                 self.write(str(file_list).encode('utf-8'))
             elif data[:len(COMMAND_UPDATE_LOG)]==COMMAND_UPDATE_LOG :
-                print data[len(COMMAND_UPDATE_LOG)+1:]
+                print data[len(COMMAND_UPDATE_LOG)+1:].replace('%20',' ')
                 self.write(str('OK').encode('utf-8'))
             elif str.isdigit(data) :  #  get signal item data
                 global file_count
