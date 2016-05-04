@@ -57,8 +57,8 @@ if you want to all automation ,plaese using `valid_poc_debug.py`
 Actually ,one machine can not fuzzing more browser either excellent performance.You can let it make more virtual machine to fuzzing .<br/>
 单个操作系统是很难可以同时来fuzzing 多个浏览器的,通常情况下一个系统只能开一个fuzzing ,所以就需要开虚拟机来最大化地利用单台主机,但是有时候操作多台主机不方便,所以需要使用分布式的模块来方便监视和调控整个fuzzing 机组系统<br/><br/>
 `distributed_master.py`  --  all slave fuzzing machine manager (master 管理整个fuzzing 系统),support command :<br/>
--update  update new code to slave machine (更新框架代码)<br/>
--upload  collect all slave machine fuzzing PoC file (调控fuzzing 系统上传崩溃文件)<br/><br/>
+**-update**  update new code to slave machine from master (更新框架代码)<br/>
+**-upload**  collect all slave machine fuzzing PoC file (调控fuzzing 系统上传崩溃文件)<br/><br/>
 `distributed_slave.py`  --  run in slave fuzzing machine (fuzzing 机器上运行的控制模块)<br/><br/>
 ![step_9-1](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/fuzzing_system.png)<br/>
 ![step_9-2](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/distributed_fuzzing.jpg)
