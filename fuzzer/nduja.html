@@ -236,6 +236,12 @@ elements = [
 var mor_array = %MOR_ARRAY% ;
 var mor_index = %MOR_INDEX% ;
 
+
+function log(excetu_log) {
+    console.log(excetu_log)
+}
+
+
 // Pick a random number between 0 and X
 function rand( x ){
 	//return Math.floor( Math.random() * x );
@@ -424,9 +430,11 @@ function insertSubTree(){
 			
 			r=rand_item( elements );
 			elementTree2[h]=document.createElement(r);
+            log('elementTree2['+h+']=document.createElement('+r+');');
 			//alert(r);
 			rb=R(document.all.length);
 			document.all[rb].appendChild(elementTree2[h]);
+            log('document.all['+rb+'].appendChild(elementTree2['+h+']);');
 			//eventManage(elementTree2[j],j);
 			
 		}	
@@ -452,11 +460,15 @@ function buildDoc1(){
 function createTxtRange(){
 	try{
 		range2 = document.body.createTextRange();
+        log('range2 = document.body.createTextRange()');
 		r2=R(document.body.all.length);
 		startNode=document.body.all[r2];
+        log('startNode=document.body.all['+r2+']');
 		range2.moveToElementText(startNode);
+        log('range2.moveToElementText('+startNode+')');
 		shift=R(20);			
-		range2.moveEnd("character", shift);  
+		range2.moveEnd("character", shift);
+        log('range2.moveEnd("character",'+shift+')');
 
 	}	
 	catch (exception) {
@@ -466,12 +478,17 @@ function createTxtRange(){
 function createElemRange1(){
 	try{
 		range1 = document.createRange();
+        log('range1 = document.createRange()');
 		r1=R(document.all.length);
 		startNode=document.all[r1];
+        log('startNode=document.all['+r1+']');
 		range1.setStart(startNode, 0);
+        log('range1.setStart('+startNode+', 0)');
 		r2=R(document.all.length);
 		endNode=document.all[r2];
+        log('endNode=document.all['+r2+']');
 		range1.setEnd(endNode, 0);
+        log('range1.setEnd('+endNode+', 0)');
 		//alert("range created");
 	}
 	catch (exception) {
@@ -481,12 +498,17 @@ function createElemRange1(){
 function createElemRange(){
 	try{
 		range = document.createRange();
+        log('range = document.createRange()');
 		r1=R(document.all.length);
 		startNode=document.all[r1];
+        log('startNode=document.all['+r1+']');
 		range.setStart(startNode, 0);
+        log('range.setStart('+startNode+', 0)');
 		r2=R(document.all.length);
 		endNode=document.all[r2];
+        log('endNode=document.all['+r2+']');
 		range.setEnd(endNode, 0);
+        log('range.setEnd('+endNode+', 0)');
 		
 	}
 	catch (exception) {
@@ -498,6 +520,7 @@ function createTagAggregation1(){
 		try{
 		index=R(elementTree1.length);
 		tagAggregation1 = document.getElementsByTagName(elementTree1[index].tagName);
+        log('tagAggregation1 = document.getElementsByTagName(elementTree1['+index+'].tagName)');
 		}
 		catch (exception) {
 		}
@@ -508,6 +531,7 @@ function createTreeWalker(){
 		rb=R(document.all.length);
 		randRoot=document.all[rb];
 		tw = document.createTreeWalker(document.all[randRoot], NodeFilter.SHOW_ALL, ElementChecker, false);
+        log('tw = document.createTreeWalker(document.all[document.all['+rb+']], NodeFilter.SHOW_ALL, ElementChecker, false);');
 		}
 		catch (exception) {
 		}
@@ -518,6 +542,7 @@ function createNodeIterator(){
 		rb=R(document.all.length);
 		randRoot=document.all[rb];
 		ni = document.createNodeIterator(document.all[randRoot], NodeFilter.SHOW_ALL, ElementChecker, false);
+        log('tw = document.createNodeIterator(document.all[document.all['+rb+']], NodeFilter.SHOW_ALL, ElementChecker, false);');
 		}
 		catch (exception) {
 		}
@@ -914,25 +939,27 @@ function fuzzAttributes(index,orig){
 						if (orig=="tree1"){
 
 							eval("elementTree1["+index+"]."+prop+" = null");
-							
+							log("elementTree1["+index+"]."+prop+" = null");
 
 							eval("document.el"+index+"."+prop+" = null");
+							log("document.el"+index+"."+prop+" = null");
 						}
 						
 						if (orig=="tag1"){
 							eval("tagAggregation1["+index+"]."+prop+" = null");
+							log("tagAggregation1["+index+"]."+prop+" = null");
 
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+prop+" = null");
+							log("currentNode."+prop+" = null");
 
 							
 						}
 						if (orig=="tw"){
 							eval("currentLeaf."+prop+" = null");
-
-							
+							log("currentLeaf."+prop+" = null");
 						}
 					}
 					catch (exception){}		
@@ -942,23 +969,25 @@ function fuzzAttributes(index,orig){
 					try{
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]."+prop+"()");
+							log("elementTree1["+index+"]."+prop+"()");
 
 							eval("document.el"+index+"."+prop+"()");
+							log("document.el"+index+"."+prop+"()");
 
 						}	
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]."+prop+"()");
-
+							log("tagAggregator1["+index+"]."+prop+"()");
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+prop+"()");
-							
+							log("currentNode."+prop+"()");
 						}
 						if (orig=="tw"){
 							eval("currentLeaf."+prop+"()");
-							
+							log("currentLeaf."+prop+"()");
 						}
 					}
 					catch (exception){}								
@@ -968,22 +997,23 @@ function fuzzAttributes(index,orig){
 					try{
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]."+prop+"(elementTree1["+index+"].parentNode);");
+							log("elementTree1["+index+"]."+prop+"(elementTree1["+index+"].parentNode);");
 							eval("document.el"+index+"."+prop+"(document.el"+index+".parentNode");
-							
+							log("document.el"+index+"."+prop+"(document.el"+index+".parentNode");
 						}
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]."+prop+"(tagAggregator1.["+index+"].parentNode);");
-							
+							log("tagAggregator1["+index+"]."+prop+"(tagAggregator1.["+index+"].parentNode);");
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+prop+"(currentNode.parentNode);");
-
+							log("currentNode."+prop+"(currentNode.parentNode);");
 						}
 						if (orig=="tw") {
 							eval("currentLeaf."+prop+"(currentLeaf.parentNode);");
-
+							log("currentLeaf."+prop+"(currentLeaf.parentNode);");
 						}
 					}
 					catch (exception){}		
@@ -993,21 +1023,23 @@ function fuzzAttributes(index,orig){
 					try{
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]."+prop+"=elementTree1["+index+"].parentNode."+prop+"");
+							log("elementTree1["+index+"]."+prop+"=elementTree1["+index+"].parentNode."+prop+"");
 							eval("document.el"+index+"."+prop+"(document.el"+index+".parentNode."+prop);
+							log("document.el"+index+"."+prop+"(document.el"+index+".parentNode."+prop);
 						}
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]."+prop+"=tagAggregator1["+index+"].parentNode."+prop+"");
-							
+							log("tagAggregator1["+index+"]."+prop+"=tagAggregator1["+index+"].parentNode."+prop+"");
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+prop+"=currentNode.parentNode."+prop+"");
-							
+							log("currentNode."+prop+"=currentNode.parentNode."+prop+"");
 						}
 						if (orig=="tw") {
 							eval("currentLeaf."+prop+"=currentLeaf.parentNode."+prop+"");
-							
+							log("currentLeaf."+prop+"=currentLeaf.parentNode."+prop+"");
 						}
 					}
 					catch (exception){}								
@@ -1019,24 +1051,23 @@ function fuzzAttributes(index,orig){
 						
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]." + prop + " = "+rv+"");
+							log("elementTree1["+index+"]." + prop + " = "+rv+"");
 							eval("document.el"+index+"." + prop + " = "+rv+"");
-							
+							log("document.el"+index+"." + prop + " = "+rv+"");
 						}
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]." + prop + " = "+rv+"");
-
+							log("tagAggregator1["+index+"]." + prop + " = "+rv+"");
 						}
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode." + prop + " = "+rv+"");
-							
-							
+							log("currentNode." + prop + " = "+rv+"");
 						}
 						if (orig=="tw") {
 							eval("currentLeaf." + prop + " = "+rv+"");
-							
-							
+							log("currentLeaf." + prop + " = "+rv+"");
 						}
 					}
 					catch (exception){}
@@ -1048,22 +1079,23 @@ function fuzzAttributes(index,orig){
 						
 						if (orig=="tree1"){
 							eval("elementTree1["+index+"]."+ prop + "("+rv+")");
+							log("elementTree1["+index+"]."+ prop + "("+rv+")");
 							eval("document.el"+index+"." + prop + " ("+rv+")");
-							
+							log("document.el"+index+"." + prop + " ("+rv+")");
 						}	
 						
 						if (orig=="tag1"){
 							eval("tagAggregator1["+index+"]."+ prop + "("+rv+")");
-							
+							log("tagAggregator1["+index+"]."+ prop + "("+rv+")");
 						}	
 						
 						if ((orig=="it1") || (orig=="it2")){
 							eval("currentNode."+ prop + "("+rv+")");
-							
+							log("currentNode."+ prop + "("+rv+")");
 						}
 						if (orig=="tw") {
 							eval("currentLeaf."+ prop + "("+rv+")");
-							
+							log("currentLeaf."+ prop + "("+rv+")");
 						}
 					}
 					catch (exception){}		
@@ -1078,7 +1110,7 @@ function fuzzAttributes(index,orig){
 	}	
 }
 function spray() {
-	for(S="\u4141",k=[],y=0;y++<65;)y<20?S+=S:k[y]=[S.substr(22)+"\u4141\u4141"].join("")
+//	for(S="\u4141",k=[],y=0;y++<65;)y<20?S+=S:k[y]=[S.substr(22)+"\u4141\u4141"].join("")
 	
 }
 function morph_fuzz()

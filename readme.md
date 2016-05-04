@@ -14,6 +14,7 @@
 5.repeat crash in browser<br/><br/>
 ![step_5_1](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_5_1.jpg)<br/><br/>
 ![step_5_2](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/step_5_2.jpg)<br/><br/>
+6.all auto fuzzing work include the `process_monitor.py`,you just config the browser path what you want to fuzzing and run it<br/><br/>
 <br/>
 
 ###Valid PoC File
@@ -38,6 +39,14 @@ You can not execute a JavaScript or VBScript in Internet Explorer still load in 
 **valid_server.py** debug  --  run server(it will load crash file from path \exploit)<br/>
 if you want to debug a exploit file ,using `valid_server.py debug` and `valid_poc.py %CrashFileIndex% debug` .`valid_poc.py` include a small debugger (support:-r %regesit% (look regesit) ;-a %address% (look memory address) ;-u %address% (get instruction) ;-quit (will exit)).<br/><br/>
 if you want to all automation ,plaese using `valid_poc_debug.py`
+
+###Distributed Fuzzing  --  `distributed_master.py` and `distributed_slave.py`
+Actually ,one machine can not fuzzing more browser either excellent performance.You can let it make more virtual machine to fuzzing .<br/><br/>
+`distributed_master.py`  --  all slave fuzzing machine manager ,support command :<br/>
+-update  update new code to slave machine<br/>
+-upload  collect all slave machine fuzzing PoC file<br/><br/>
+`distributed_slave.py`  --  run in slave fuzzing machine
+<br/>
 
 ###Other Envirment Setting
 1.Set IE Single Process -> `set_ie_single_process.reg`<br/><br/>
