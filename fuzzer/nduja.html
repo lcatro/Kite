@@ -277,7 +277,7 @@ function XHR() {
 function log(execute_log) {
     if (typeof log_url!='undefined') {
        var xhr=XHR();
-        xhr.open('get',log_url+'?log='+execute_log,false);
+        xhr.open('get',log_url+'log='+execute_log,false);
         xhr.send(null);
     } else
         console.log(execute_log);
