@@ -5,10 +5,10 @@
 <meta http-equiv="Cache-Control" content="no-cache"/>	
 <script type='text/javascript'>
 
-MAXELEM=5;
-MAXPROP=3;
+MAXELEM=6;
+MAXPROP=4;
 MAXDESTR=3;
-MAXLISTENERS=2;
+MAXLISTENERS=3;
 events=['DOMActivate','DOMCharacterDataModified','DOMNodeInserted','DOMNodeInsertedIntoDocument','DOMNodeRemoved','DOMNodeRemovedFromDocument','DOMSubtreeModified','change','CheckboxStateChange','copy','cut','focus','input','load','paste','select','selectionchange','textInput','unload'];
 commands=['delete','insertButton','insertFieldset','insertHorizontalRule','insertIFrame','insertInputButton','insertInputCheckbox','insertInputFileUpload','insertInputHidden','insertInputImage','insertInputPassword','insertInputRadio','insertInputReset','insertInputSubmit','insertInputText','insertMarquee','insertOrderedList','insertSelectDropdown','insertSelectListbox','insertTextArea','insertUnorderedList'];
 interesting_vals = [0, 1, -1, 5e6, -7e6, 8e-6, 2e100, 7500000000, 4400000000, -4400000000, -7500000000, '',  0x80000000, 0xFFFFFFFF, NaN,
@@ -42,7 +42,31 @@ object_blacklist = [
   'cloneNode',
   'open',
   'close',
-  'print'
+  'print',
+  'title',
+  'localName',
+  'tagName',
+  'firstElementChild',
+  'lastElementChild',
+  'firstChild',
+  'addEventListener',
+  'removeEventListener',
+  'dispatchEvent',
+  'replaceChild',
+  'removeChild',
+  'appendChild',
+  'getAttributeNode',
+  'setAttributeNode',
+  'removeAttribute',
+  'getAttributeNodeNS',
+  'setAttributeNodeNS',
+  'removeAttributeNS',
+  'hasAttribute',
+  'setAttribute', 
+  'getAttribute',
+  'hasAttributes',
+  'setAttribute',
+  'setAttribute'
 ];
 
 
@@ -205,7 +229,7 @@ elements = [
   "TITLE",
   "H1",
   "BLINK",
- // "!DOCTYPE",
+  "!DOCTYPE",
   "AREA",
   "COL",
   "SPAN",
@@ -235,13 +259,29 @@ elements = [
 
 var mor_array = %MOR_ARRAY% ;
 var mor_index = %MOR_INDEX% ;
+//turn_on_log var log_url = %log_url%;
 
-
-function log(excetu_log) {
-    console.log(excetu_log)
+function XHR() {
+    var xhr;
+    try {xhr = new XMLHttpRequest();}
+    catch(e) {
+        var IEXHRVers =["Msxml3.XMLHTTP","Msxml2.XMLHTTP","Microsoft.XMLHTTP"];
+        for (var i=0,len=IEXHRVers.length;i< len;i++) {
+            try {xhr = new ActiveXObject(IEXHRVers[i]);}
+            catch(e) {continue;}
+        }
+    }
+    return xhr;
 }
 
-
+function log(execute_log) {
+    if (typeof log_url!='undefined') {
+       var xhr=XHR();
+        xhr.open('get',log_url+'?log='+execute_log,false);
+        xhr.send(null);
+    } else
+        console.log(execute_log);
+}
 // Pick a random number between 0 and X
 function rand( x ){
 	//return Math.floor( Math.random() * x );
@@ -430,11 +470,9 @@ function insertSubTree(){
 			
 			r=rand_item( elements );
 			elementTree2[h]=document.createElement(r);
-            log('elementTree2['+h+']=document.createElement('+r+');');
 			//alert(r);
 			rb=R(document.all.length);
 			document.all[rb].appendChild(elementTree2[h]);
-            log('document.all['+rb+'].appendChild(elementTree2['+h+']);');
 			//eventManage(elementTree2[j],j);
 			
 		}	
@@ -588,21 +626,28 @@ function buildElementsTree1(){
 		//clobber=[];
 		if(document.createStyleSheet){
 			styleSheet1 = document.createStyleSheet ("");
+            log("styleSheet1 = document.createStyleSheet ('');");
 		}
 		else { 
 			styleSheet1=document.createElement('link'); 
+            log("styleSheet1 = document.createElement ('link');");
 			styleSheet1.rel='stylesheet'; 
+            log("styleSheet1.rel='stylesheet';");
 			document.body.appendChild(styleSheet1); 
+            log("document.body.appendChild(styleSheet1); ");
 		} 
 		for (k=0;k<MAXELEM;k++){
 			
 			r=rand_item( elements );
 			elementTree1[k]=document.createElement(r);
+            log("elementTree1[k]=document.createElement(r)");
 			//assegno un id x clobbering
 			elementTree1[k].id="el"+k;
+            log("elementTree1[k].id='el'+k");
 			
 			rb=R(document.all.length);
 			document.all[rb].appendChild(elementTree1[k]);
+            log("document.all["+rb+"].appendChild(elementTree1["+k+"])");
 			initialize(elementTree1[k]);
 			tweakattributes1(elementTree1[k],k);
 			tweakstyle1(elementTree1[k],k);
@@ -618,6 +663,7 @@ function tweakElem(elem){
 			
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
+                    log("elem.setAttribute("+p+","+r+")");
 		
 			}
 			
@@ -633,8 +679,7 @@ function tweakattributes1(elem,i){
 			
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
-
-		
+                    log("elem.setAttribute("+p+","+r+")");
 			}
 			
 		
@@ -646,12 +691,13 @@ function tweakattributes(elem){
 		for( var p in elem){
 			try {
 				elem.setAttribute(p,"\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141");
+                log("elem.setAttribute("+p+",\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141)");
 			}
 				catch (exception) {
 			}
 		}
-	}			
-
+	}	
+    
 function tweakstyle1 (elem,i){
 	for(j=0; j<MAXPROP;j++){
 		try {
@@ -661,6 +707,7 @@ function tweakstyle1 (elem,i){
 			valueIndex=R(propL);
 			propValue=prop[valueIndex];
 			styleSheet1.addRule(elementTree1[i].tagName,"{"+propName+": "+propValue+";}");
+            log("styleSheet1.addRule(elementTree1["+'i'+"].tagName,'{"+propName+"': '"+propValue+";}');");
 		}
 		catch (exception) {
 		}
@@ -671,6 +718,7 @@ function deleteRange1(){
 	try{
 		
 		range1.deleteContents();
+        log("range1.deleteContents()");
 	}
 	catch (exception) {
 	}
@@ -680,7 +728,7 @@ function deleteRange1(){
 function destroy1(node){
 	try {
 		node=null;
-		
+        log("node=null;");
 	  }
 	catch (exception) {
 	  }
@@ -717,36 +765,47 @@ function alterRange(){
 		switch (cmd){
 			case 0:
 				range.deleteContents();
+                log("range2.deleteContents()");
 				break;
 			case 1:
 				range.collapse();
+                log("range2.collapse()");
 				break;
 			case 2:
 				var documentFragment = range.extractContents();
+                log("var documentFragment = range.extractContents()");
 				break;
 			case 3:
 				range.surroundContents(randElem);
+                log("range.surroundContents("+randElem+")");
 				break;
 			case 4:	
 				range.selectNode(randElem);
+                log("range.selectNode("+randElem+")");
 				break;
 			case 5:
 				range.selectNodeContents(randElem);
+                log("range.selectNodeContents("+randElem+")");
 				break;
 			case 6:
 				range.insertNode(randElem);
+                log("range.insertNode("+randElem+")");
 				break;
 			case 7:
 				range.setStartAfter(randElem);
+                log("range.setStartAfter("+randElem+")");
 				break;
 			case 8:
 				range.setStartBefore(randElem);
+                log("range.setStartBefore("+randElem+")");
 				break;
 			case 9:
 				range.setEndAfter(randElem);
+                log("range.setEndAfter("+randElem+")");
 				break;						
 			case 10:
 				range.setEndBefore(randElem);
+                log("range.setEndBefore("+randElem+")");
 				break;
 		}		
 		
@@ -763,7 +822,9 @@ function alterTextRange(){
 		cmd=R(commands.length);
 		//alert(cmd)
 		range2.select();
+        log("range2.select()");
 		range2.execCommand(commands[cmd],true,null);
+        log("range2.execCommand("+commands[cmd]+",true,null)");
 	
 	}
 	catch( exception )
@@ -777,6 +838,7 @@ function rulesCrawler1(){
 		for (i=0;i<l;i++){
 			
 			styleSheet1.cssRules[i].style.setAttribute('color','red');
+            log("styleSheet1.cssRules["+i+"].style.setAttribute('color','red')");
 		}	
 
 	}
@@ -794,9 +856,11 @@ function moveIterator(){
 			switch(rm){
 				case 0:
 					ni.nextNode();
+                    log("ni.nextNode()");
 					break;
 				case 1:
 					ni.previousNode();
+                    log("ni.previousNode()");
 					break;
 			
 			}
@@ -808,7 +872,6 @@ function moveIterator(){
 	}
 }
 
-
 function moveTreeWalker(){
 	try{
 		rMoves=R(5);
@@ -818,24 +881,31 @@ function moveTreeWalker(){
 			switch(rm){
 				case 0:
 					tw.nextNode();
+                    log("tw.nextNode()");
 					break;
 				case 1:
 					tw.previousNode();
+                    log("tw.previousNode()");
 					break;
 				case 2:
 					tw.previousSibling();
+                    log("tw.previousSibling()");
 					break;
 				case 3:
 					tw.nextSibling();
+                    log("tw.nextSibling()");
 					break;
 				case 4:
 					tw.firstChild();
+                    log("tw.firstChild()");
 					break;
 				case 5:
 					tw.lastChild();
+                    log("tw.lastChild()");
 					break;
 				case 6:
 					tw.parentNode();
+                    log("tw.parentNode()");
 					break;	
 			}
 		}	
@@ -845,7 +915,6 @@ function moveTreeWalker(){
 	catch (exception) {
 	}
 }		
-
 function nodeIteration1(){
 	try{
 		current = ni.root;
@@ -897,7 +966,7 @@ function nodeIteration(){
 		while (currentNode!=range.startContainer)  {
 			if (currentNode!=range.startContainer){
 				currentNode = ni.nextNode();
-				
+                log("currentLeaf = ni.nextNode()");
 			}
 		}
 		
@@ -913,7 +982,7 @@ function treeIteration(){
 		while (currentLeaf!=range.startContainer)  {
 			if (currentLeaf!=range.startContainer){
 				currentLeaf = tw.nextNode();
-				
+                log("currentLeaf = tw.nextNode()");
 			}
 		}
 		
@@ -1110,8 +1179,7 @@ function fuzzAttributes(index,orig){
 	}	
 }
 function spray() {
-//	for(S="\u4141",k=[],y=0;y++<65;)y<20?S+=S:k[y]=[S.substr(22)+"\u4141\u4141"].join("")
-	
+//	for(S="\u4141",k=[],y=0;y++<65;)y<20?S+=S:k[y]=[S.substr(22)+"\u4141\u4141"].join("")	
 }
 function morph_fuzz()
 {

@@ -8,9 +8,14 @@ import sys
 import tornado.web
 import tornado.ioloop
 
+from valid_poc import *
+
 BASE_DIR=os.path.dirname(__file__)
 CONFIG_POC_PATH=BASE_DIR+'\\poc'
 CONFIG_EXPLOIT_PATH=BASE_DIR+'\\exploit'
+COMMAND_GET_ALL_FILE_COUNT='all'
+COMMAND_GET_FILE_LIST='files'
+COMMAND_UPDATE_LOG='log'
 EXTANSION_NAME_POC='.poc.html'
 EXTANSION_NAME_EXPLOIT='.exploit.html'
 
@@ -24,20 +29,26 @@ class PocHandler(tornado.web.RequestHandler):
         url=self.request.uri
         if url.find('?')>0 :
             data=url[url.find('?')+1:]
-            if data=='all' :
+            if data==COMMAND_GET_ALL_FILE_COUNT :
                 global file_count
                 self.write(str(file_count).encode('utf-8'))
-            elif data=='files' :
+            elif data==COMMAND_GET_FILE_LIST :
                 global file_list
                 self.write(str(file_list).encode('utf-8'))
-            elif str.isdigit(data) :
+            elif data[:len(COMMAND_UPDATE_LOG)]==COMMAND_UPDATE_LOG :
+                print data[len(COMMAND_UPDATE_LOG)+1:]
+                self.write(str('OK').encode('utf-8'))
+            elif str.isdigit(data) :  #  get signal item data
                 global file_count
                 global file_list
                 if file_count>0 :
                     print str(int(data)),file_list[int(data)]
                     file_poc=open(file_list[int(data)]);
                     if file_poc :
-                        self.write(file_poc.read().encode('utf-8'))
+                        file_poc_data=file_poc.read()
+                        file_poc_data=file_poc_data.replace('//turn_on_log ','')
+                        file_poc_data=file_poc_data.replace('%log_url%',POC_URL)
+                        self.write(file_poc_data.encode('utf-8'))
                         file_poc.close()
                     else :
                         self.write('Open File ERROR!'.encode('utf-8'))
