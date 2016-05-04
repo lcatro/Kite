@@ -111,7 +111,7 @@ class distributed_slave() :
                 file_data=open(file_path)
                 if file_data :
                     file_index=[]
-                    file_index.append(file_path)
+                    file_index.append(file_name)
                     file_index.append(file_data.read())
                     file_data.close()
                     file_list.append(file_index)
