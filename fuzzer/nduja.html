@@ -65,7 +65,6 @@ object_blacklist = [
   'setAttribute', 
   'getAttribute',
   'hasAttributes',
-  'setAttribute',
   'setAttribute'
 ];
 
@@ -322,7 +321,8 @@ function initialize(elem,element_tree_index){
 			rndb=RBool();
 			elem.addEventListener (ri, modifyDOM, rndb);
             if (typeof element_tree_index!='undefine')
-                log('try{elementTree1['+element_tree_index+'].addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
+            //    log('try{elementTree1['+element_tree_index+'].addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
+                log('try{elementTree1['+element_tree_index+'].addEventListener("'+ri+'",function(){},'+rndb+');}catch(e){}');
             else
                 log('try{'+elem.tagName+'.addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
 		}
@@ -341,7 +341,8 @@ function removeListeners(elem){
 			rndb=RBool();
 			//alert(r);
 			elem.removeEventListener (ri, modifyDOM, rndb);	
-            log('try{'+elem.tagName+'.addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
+//            log('try{'+elem.tagName+'.addEventListener("'+ri+'",'+modifyDOM+','+rndb+');}catch(e){}');
+            log('try{'+elem.tagName+'.addEventListener("'+ri+'",function(){},'+rndb+');}catch(e){}');
 
 
 			}
@@ -480,7 +481,7 @@ function insertSubTree(){
 			//alert(r);
 			rb=R(document.all.length);
 			document.all[rb].appendChild(elementTree2[h]);
-            log('document.all['+rb+'.appendChild(elementTree2['+h+']);');
+            log('document.all['+rb+'].appendChild(elementTree2['+h+']);');
 			//eventManage(elementTree2[j],j);
 			
 		}	
@@ -665,14 +666,27 @@ function buildElementsTree1(){
 	}
 }
 
+function find_value_index_in_interesting_vals(data) {
+    if (data==="") return 11;
+    for (var index=0;index<interesting_vals.length;++index)
+        if (data==interesting_vals[index])
+            return index;
+    return -1;
+}
+    
 function tweakElem(elem){
 	for( var p in elem){
 		try {
 			
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
-                    if (interesting_vals[11]!=r && interesting_vals[31]!=r)
-                        log("try{"+tagName+".setAttribute("+p+","+r+");}catch(e){}");
+                    attr_index=find_value_index_in_interesting_vals(r);
+                    if (attr_index==31)
+                        log("try{"+elem.tagName+".setAttribute('"+p+"','\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141');}catch(e){}");
+                    else if ((18<=attr_index && attr_index<=30)||11==attr_index)
+                        log("try{"+elem.tagName+".setAttribute('"+p+"','"+r+"');}catch(e){}");
+                    else
+                        log("try{"+elem.tagName+".setAttribute('"+p+"',"+r+");}catch(e){}");
 		
 			}
 			
@@ -688,8 +702,13 @@ function tweakattributes1(elem,i){
 			
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
-                    if (interesting_vals[11]!=r && interesting_vals[31]!=r)
-                        log("try{elementTree1["+i+"].setAttribute("+p+","+r+");}catch(e){}");
+                    attr_index=find_value_index_in_interesting_vals(r);
+                    if (attr_index==31)
+                        log("try{elementTree1["+i+"].setAttribute('"+p+"','\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141');}catch(e){}");
+                    else if ((18<=attr_index && attr_index<=30)||11==attr_index)
+                        log("try{elementTree1["+i+"].setAttribute('"+p+"','"+r+"');}catch(e){}");
+                    else
+                        log("try{elementTree1["+i+"].setAttribute('"+p+"',"+r+");}catch(e){}");
 			}
 			
 		
@@ -701,7 +720,7 @@ function tweakattributes(elem){
 		for( var p in elem){
 			try {
 				elem.setAttribute(p,"\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141");
-                //log("elem.setAttribute("+p+",\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141);");
+                //log("elem.setAttribute('"+p+"','\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141');");
 			}
 				catch (exception) {
 			}

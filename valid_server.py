@@ -22,6 +22,12 @@ EXTANSION_NAME_EXPLOIT='.exploit.html'
 file_count=0
 file_list=[]
 
+def log(data) :
+    log_file=open('log.txt','a')
+    if log_file :
+        log_file.write(data+'\n')
+        log_file.close()
+
 class PocHandler(tornado.web.RequestHandler):
     def get(self):
         # /poc?all -> Get file count
@@ -36,7 +42,9 @@ class PocHandler(tornado.web.RequestHandler):
                 global file_list
                 self.write(str(file_list).encode('utf-8'))
             elif data[:len(COMMAND_UPDATE_LOG)]==COMMAND_UPDATE_LOG :
-                print data[len(COMMAND_UPDATE_LOG)+1:].replace('%20',' ')
+                data=data[len(COMMAND_UPDATE_LOG)+1:].replace('%20',' ')
+                print data
+                log(data)
                 self.write(str('OK').encode('utf-8'))
             elif str.isdigit(data) :  #  get signal item data
                 global file_count
