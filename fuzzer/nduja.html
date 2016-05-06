@@ -367,27 +367,39 @@ function findInTree(elem){
 
 function modifyDOM(event){
 	try {
+        log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'('+event.eventPhase+')');
 		switch (event.eventPhase) {
 		case Event.CAPTURING_PHASE:
 			removeListeners(event.currentTarget);
+            log('//modifyDOM: removeListeners('+event.currentTarget.tagName+')');
 			switch (R(4)){
 				case 0:
 					createElemRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createElemRange())');
 					alterRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterRange())');
 					break;
 				case 1:
 					createTxtRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createTxtRange())');
 					alterTextRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterTextRange())');
 					break;
 				case 2:
 					createElemRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createElemRange())');
 					alterRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterRange())');
 					moveIterator();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(moveIterator())');
 					break;
 				case 3:
 					createTxtRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createTxtRange())');
 					alterTextRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterTextRange())');
 					moveTreeWalker();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(moveTreeWalker())');
 					break;	
 			}
 			
@@ -397,16 +409,19 @@ function modifyDOM(event){
 			switch (R(4)){
 				case 0:
 					moveIterator();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(moveIterator())');
 				break;
 				case 1:
-					insertSubTree();	
+					insertSubTree();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(insertSubTree())');	
 				break;
 				case 2:
 					treeCrawler1();
-
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(treeCrawler1())');
 				break;
 				case 3:
 					moveTreeWalker();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(moveTreeWalker())');
 				break;
 
 			}	
@@ -416,51 +431,70 @@ function modifyDOM(event){
 		case Event.AT_TARGET:
 			currElem=findInTree(event.target);
 			initialize(event.target);
+            log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(initialize('+event.target.tagName+')');
 
 			break;
 		case Event.BUBBLING_PHASE:
 			currElem=findInTree(event.currentTarget);
 			removeListeners(event.currentTarget);
+            log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(removeListeners('+event.currentTarget+')');
 				switch (R(4)){
 				case 0:
 					createElemRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createElemRange())');
 					alterRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterRange())');
 					break;
 				case 1:
 					createTxtRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createTxtRange())');
 					alterTextRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterTextRange())');
 					break;
 				case 2:
 					createElemRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createElemRange())');
 					alterRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterRange())');
 					createTxtRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createTxtRange())');
 					alterTextRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterTextRange())');
 					break;
 				case 3:
 					createTxtRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createTxtRange())');
 					alterTextRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterTextRange())');
 					createElemRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(createElemRange())');
 					alterRange();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(alterRange())');
 					break;	
 			}
 							
 			switch (R(4)){
 				case 0:
 					moveIterator();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(moveIterator())');
 				break;
 				case 1:
 					insertSubTree();	
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(insertSubTree())');
 				break;
 				case 2:
 					treeCrawler1();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(treeCrawler1())');
 
 				break;
 				case 3:
 					moveTreeWalker();
+                    log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(moveTreeWalker())');
 				break;
 
 			}
-			initialize(event.target);					
+			initialize(event.target);	
+            log('//modifyDOM: Tag='+event.srcElement.tagName+' Event:on'+event.type+'(initialize('+event.target+'))');				
 
 			break;
 		}
@@ -550,12 +584,12 @@ function createElemRange(){
 		startNode=document.all[r1];
         log('startNode=document.all['+r1+'];');
 		range.setStart(startNode, 0);
-        log('range.setStart('+startNode+',0);');
+        log('try{range.setStart('+startNode+',0);}catch(e){}');
 		r2=R(document.all.length);
 		endNode=document.all[r2];
         log('endNode=document.all['+r2+'];');
 		range.setEnd(endNode, 0);
-        log('range.setEnd('+endNode+',0);');
+        log('try{range.setEnd('+endNode+',0);}catch(e){}');
 		
 	}
 	catch (exception) {
@@ -577,6 +611,7 @@ function createTreeWalker(){
 	 try{
 		rb=R(document.all.length);
 		randRoot=document.all[rb];
+		log('randRoot=document.all['+rb+'];');
 		tw = document.createTreeWalker(document.all[randRoot], NodeFilter.SHOW_ALL, ElementChecker, false);
         log('tw=document.createTreeWalker(document.all[document.all['+rb+']],NodeFilter.SHOW_ALL,ElementChecker,false);');
 		}
@@ -602,8 +637,10 @@ function createNodeIterator(){
 			case 0:
 				//alert(1);
 				createElemRange1();
+                log('//ElementChecker: createElemRange1()');
 				//alert(2);
 				deleteRange1();
+                log('//ElementChecker: deleteRange1()');
 				//alert(3);
 
 				break;
@@ -736,7 +773,7 @@ function tweakstyle1 (elem,i){
 			valueIndex=R(propL);
 			propValue=prop[valueIndex];
 			styleSheet1.addRule(elementTree1[i].tagName,"{"+propName+": "+propValue+";}");
-            log("styleSheet1.addRule(elementTree1["+'i'+"].tagName,'{"+propName+"': '"+propValue+";}');");
+            log("styleSheet1.addRule(elementTree1["+i+"].tagName,'{"+propName+"':'"+propValue+";}');");
 		}
 		catch (exception) {
 		}
@@ -769,15 +806,25 @@ function boom(){
 		try
 		{
 			createNodeIterator();
+            log("//boom createNodeIterator()");
 			createTreeWalker();
+            log("//boom createTreeWalker()");
 			createTagAggregation1();
+            log("//boom createTagAggregation1()");
 			createElemRange();
-			createTxtRange();					
+            log("//boom createElemRange()");
+			createTxtRange();			
+            log("//boom createTxtRange()");		
 			alterRange();
-			spray();
+            log("//boom alterRange()");
+			//spray();
+            //log("//boom createNodeIterator()");
 			moveIterator();
+            log("//boom moveIterator()");
 			moveTreeWalker();
+            log("//boom moveTreeWalker()");
 			tagCrawler1();
+            log("//boom tagCrawler1()");
 			
 		}
 		catch( exception )
@@ -791,6 +838,7 @@ function alterRange(){
 		cmd=rand(11);
 		rb=R(document.all.length);//va ristretto alla length del range
 		randElem=document.all[rb];
+        log("randElem=document.all["+rb+"];");
 		switch (cmd){
 			case 0:
 				range.deleteContents();
@@ -806,35 +854,35 @@ function alterRange(){
 				break;
 			case 3:
 				range.surroundContents(randElem);
-                log("range.surroundContents("+randElem+");");
+                log("try{range.surroundContents("+randElem+");}catch(e){}");
 				break;
 			case 4:	
 				range.selectNode(randElem);
-                log("range.selectNode("+randElem+");");
+                log("try{range.selectNode("+randElem+");}catch(e){}");
 				break;
 			case 5:
 				range.selectNodeContents(randElem);
-                log("range.selectNodeContents("+randElem+");");
+                log("try{range.selectNodeContents("+randElem+");}catch(e){}");
 				break;
 			case 6:
 				range.insertNode(randElem);
-                log("range.insertNode("+randElem+");");
+                log("try{range.insertNode("+randElem+");}catch(e){}");
 				break;
 			case 7:
 				range.setStartAfter(randElem);
-                log("range.setStartAfter("+randElem+");");
+                log("try{range.setStartAfter("+randElem+");}catch(e){}");
 				break;
 			case 8:
 				range.setStartBefore(randElem);
-                log("range.setStartBefore("+randElem+");");
+                log("try{range.setStartBefore("+randElem+");}catch(e){}");
 				break;
 			case 9:
 				range.setEndAfter(randElem);
-                log("range.setEndAfter("+randElem+");");
+                log("try{range.setEndAfter("+randElem+");}catch(e){}");
 				break;						
 			case 10:
 				range.setEndBefore(randElem);
-                log("range.setEndBefore("+randElem+");");
+                log("try{range.setEndBefore("+randElem+");}catch(e){}");
 				break;
 		}		
 		
@@ -853,7 +901,7 @@ function alterTextRange(){
 		range2.select();
         log("range2.select();");
 		range2.execCommand(commands[cmd],true,null);
-        log("range2.execCommand("+commands[cmd]+",true,null);");
+        log("range2.execCommand('"+commands[cmd]+"',true,null);");
 	
 	}
 	catch( exception )
