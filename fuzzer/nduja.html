@@ -584,12 +584,12 @@ function createElemRange(){
 		startNode=document.all[r1];
         log('startNode=document.all['+r1+'];');
 		range.setStart(startNode, 0);
-        log('try{range.setStart('+startNode+',0);}catch(e){}');
+        log('try{range.setStart(startNode,0);}catch(e){}');
 		r2=R(document.all.length);
 		endNode=document.all[r2];
         log('endNode=document.all['+r2+'];');
 		range.setEnd(endNode, 0);
-        log('try{range.setEnd('+endNode+',0);}catch(e){}');
+        log('try{range.setEnd(endNode,0);}catch(e){}');
 		
 	}
 	catch (exception) {
@@ -854,35 +854,35 @@ function alterRange(){
 				break;
 			case 3:
 				range.surroundContents(randElem);
-                log("try{range.surroundContents("+randElem+");}catch(e){}");
+                log("try{range.surroundContents(randElem);}catch(e){}");
 				break;
 			case 4:	
 				range.selectNode(randElem);
-                log("try{range.selectNode("+randElem+");}catch(e){}");
+                log("try{range.selectNode(randElem);}catch(e){}");
 				break;
 			case 5:
 				range.selectNodeContents(randElem);
-                log("try{range.selectNodeContents("+randElem+");}catch(e){}");
+                log("try{range.selectNodeContents(randElem);}catch(e){}");
 				break;
 			case 6:
 				range.insertNode(randElem);
-                log("try{range.insertNode("+randElem+");}catch(e){}");
+                log("try{range.insertNode(randElem);}catch(e){}");
 				break;
 			case 7:
 				range.setStartAfter(randElem);
-                log("try{range.setStartAfter("+randElem+");}catch(e){}");
+                log("try{range.setStartAfter(randElem);}catch(e){}");
 				break;
 			case 8:
 				range.setStartBefore(randElem);
-                log("try{range.setStartBefore("+randElem+");}catch(e){}");
+                log("try{range.setStartBefore(randElem);}catch(e){}");
 				break;
 			case 9:
 				range.setEndAfter(randElem);
-                log("try{range.setEndAfter("+randElem+");}catch(e){}");
+                log("try{range.setEndAfter(randElem);}catch(e){}");
 				break;						
 			case 10:
 				range.setEndBefore(randElem);
-                log("try{range.setEndBefore("+randElem+");}catch(e){}");
+                log("try{range.setEndBefore(randElem);}catch(e){}");
 				break;
 		}		
 		
