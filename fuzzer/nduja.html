@@ -719,7 +719,7 @@ function tweakElem(elem){
 					elem.setAttribute(p,r);
                     attr_index=find_value_index_in_interesting_vals(r);
                     if (attr_index==31)
-                        log("try{"+elem.tagName+".setAttribute('"+p+"','\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141');}catch(e){}");
+                        log("try{"+elem.tagName+".setAttribute('"+p+"','\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141');}catch(e){}");
                     else if ((18<=attr_index && attr_index<=30)||11==attr_index)
                         log("try{"+elem.tagName+".setAttribute('"+p+"','"+r+"');}catch(e){}");
                     else
@@ -741,7 +741,7 @@ function tweakattributes1(elem,i){
 					elem.setAttribute(p,r);
                     attr_index=find_value_index_in_interesting_vals(r);
                     if (attr_index==31)
-                        log("try{elementTree1["+i+"].setAttribute('"+p+"','\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141');}catch(e){}");
+                        log("try{elementTree1["+i+"].setAttribute('"+p+"','\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141');}catch(e){}");
                     else if ((18<=attr_index && attr_index<=30)||11==attr_index)
                         log("try{elementTree1["+i+"].setAttribute('"+p+"','"+r+"');}catch(e){}");
                     else
@@ -756,7 +756,7 @@ function tweakattributes1(elem,i){
 function tweakattributes(elem){
 		for( var p in elem){
 			try {
-				elem.setAttribute(p,"\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141");
+				elem.setAttribute(p,"\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141");
                 //log("elem.setAttribute('"+p+"','\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141');");
 			}
 				catch (exception) {
