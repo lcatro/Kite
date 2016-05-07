@@ -21,6 +21,7 @@ EXTANSION_NAME_EXPLOIT='.exploit.html'
 
 file_count=0
 file_list=[]
+is_debug=False
 
 def log(data) :
     log_file=open('log.txt','a')
@@ -41,7 +42,7 @@ class PocHandler(tornado.web.RequestHandler):
             elif data==COMMAND_GET_FILE_LIST :
                 global file_list
                 self.write(str(file_list).encode('utf-8'))
-            elif data[:len(COMMAND_UPDATE_LOG)]==COMMAND_UPDATE_LOG :
+            elif data[:len(COMMAND_UPDATE_LOG)]==COMMAND_UPDATE_LOG and is_debug :
                 data=data[len(COMMAND_UPDATE_LOG)+1:].replace('%20',' ')
                 print data
                 log(data)
@@ -54,8 +55,9 @@ class PocHandler(tornado.web.RequestHandler):
                     file_poc=open(file_list[int(data)]);
                     if file_poc :
                         file_poc_data=file_poc.read()
-                        file_poc_data=file_poc_data.replace('//turn_on_log ','')
-                        file_poc_data=file_poc_data.replace('%log_url%',POC_URL)
+			if is_debug :
+                            file_poc_data=file_poc_data.replace('//turn_on_log ','')
+                            file_poc_data=file_poc_data.replace('%log_url%',POC_URL)
                         self.write(file_poc_data.encode('utf-8'))
                         file_poc.close()
                     else :
@@ -86,6 +88,7 @@ if __name__=='__main__' :
     print 'Server Running'
     if len(sys.argv)==2 and sys.argv[1]=='debug' :
         flash_file_list(CONFIG_EXPLOIT_PATH,EXTANSION_NAME_EXPLOIT)
+	is_debug=True
     else :
         flash_file_list(CONFIG_POC_PATH,EXTANSION_NAME_POC)
     listen(80)
