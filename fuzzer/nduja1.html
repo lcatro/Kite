@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Morph Simple Fuzzer</title>
+<script type='text/javascript'>
+
+elements = [
+  "CANVAS",
+  "ARTICLE",
+  "ASISE",
+  "B",
+  "BDI",
+  "BDO",
+  "BLOCKQUOTE",
+  "BR",
+  "BUTTON",
+  "CANVAS",
+  "CAPTION",
+  "CITE",
+  "COL",
+  "CODE",
+  "COMMAND",
+  "DATALIST",
+  "DD",
+  "DEL",
+  "DETAILS",
+  "DFN",
+  "DL",
+  "DT",
+  "EM",
+  "STYLE",
+  "FIELDSET",
+  "FIGCAPTION",
+  "SCRIPT",
+  "EMBED",
+  "FIGURE",
+  "FOOTER",
+  "HEADER",
+  "HGROUP",
+  "HR",
+  "I",
+  "INPUT",
+  "INS",
+  "KEYGEN",
+  "KBD",
+  "LEGEND",
+  "MARK",
+  "MENU",
+  "METER",
+  "NAV",
+  "NOSCRIPT",
+  "OPTGROUP",
+  "OUTPUT",
+  "P",
+  "PARAM",
+  "PRE",
+  "PROGRESS",
+  "Q",
+  "RP",
+  "RT",
+  "RUBY",
+  "S",
+  "SAMP",
+  "SECTION",
+  "SELECT",
+  "SMALL",
+  "SOURCE",
+  "SPAN",
+  "SUP",
+  "TH",
+  "THEAD",
+  "TIME",
+  "OBJECT",
+  "IFRAME",
+  "TEXTAREA",
+  "TRACK",
+  "U",
+  "VAR",
+  "WBR",
+  "FORM",
+  "A",
+  "BODY",
+  "HTML",
+  "DIV",
+  "TABLE",
+  "AREA",
+  "TD",
+  "TR",
+  "LINK",
+  "BASE",
+  "FONT",
+  "HEAD",
+  "IMG",
+  "MAP",
+  "META",
+  "OL",
+  "LI",
+  "TBODY",
+  "TITLE",
+  "H1",
+  "BLINK",
+  "!DOCTYPE",
+  "AREA",
+  "COL",
+  "SPAN",
+  "FRAMESET",
+  "FRAME",
+  "UL",
+  "OPTION",
+  "NOFRAMES",
+  "TFOOT",
+  "XMP",
+  "ISINDEX",
+  "CENTER",
+  "HR",
+  "LABEL",
+  "OPTGROUP",
+  "AUDIO",
+  "VIDEO",
+  "SVG"
+];
+
+interesting_vals = [0, 1, -1, 5e6, -7e6, 8e-6, 2e100, 7500000000, 4400000000, -4400000000, -7500000000, '',  0x80000000, 0xFFFFFFFF, NaN,
+false, true, null, 'pink', 'ltr','rtl','auto','copy','move','link','ab','bg','en','no','open','controls',
+'\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141'];
+    
+//turn_on_log var log_url = "%log_url%";
+
+var mor_array = %MOR_ARRAY% ;
+var mor_index = 5 ;
+// Pick a random number between 0 and X
+function morph_rand( x ){
+	//return Math.floor( Math.random() * x );
+	index = (mor_index++) % (mor_array.length);
+	return mor_array[index] % x;
+}
+
+function rand_item( arr ){
+	return arr[morph_rand(arr.length)];
+}
+
+function XHR() {
+    var xhr;
+    try {xhr = new XMLHttpRequest();}
+    catch(e) {
+        var IEXHRVers =["Msxml3.XMLHTTP","Msxml2.XMLHTTP","Microsoft.XMLHTTP"];
+        for (var i=0,len=IEXHRVers.length;i< len;i++) {
+            try {xhr = new ActiveXObject(IEXHRVers[i]);}
+            catch(e) {continue;}
+        }
+    }
+    return xhr;
+}
+
+function log(execute_log) {
+    if (typeof log_url!='undefined') {
+        var xhr=XHR();
+        xhr.open('get',log_url+'log='+execute_log,false);
+        xhr.send(null);
+    } else
+        console.log(execute_log);
+}
+    
+MAX_ELEMENT_NUM = 20;
+
+function morph_fuzz(){
+	var elementTree = [];	
+	for(var k=0;k<MAX_ELEMENT_NUM;k++){
+		try {
+			r = rand_item(elements);
+            elementTree[k] = document.createElement(r);
+            log('elementTree['+k+']=document.createElement("'+r+'");');
+			elementTree[k].id = "Element" + k;
+       	    log('elementTree['+k+'].id="Element"+'+k+';');
+			rb = morph_rand(document.all.length);
+			document.all[rb].appendChild(elementTree[k]);
+            log('document.all['+rb+'].appendChild(elementTree['+k+']);');
+            tweakattributes1(elementTree[k],k);
+		} catch(e) {;}
+	}
+}
+
+function find_value_index_in_interesting_vals(data) {
+    if (data==="") return 11;
+    for (var index=0;index<interesting_vals.length;++index)
+        if (data==interesting_vals[index])
+            return index;
+    return -1;
+}
+   
+function tweakattributes1(elem,i){
+	for( var p in elem){
+		try {
+			        if (p.indexOf("on")!=-1) continue;
+					r=rand_item(interesting_vals);
+					elem.setAttribute(p,r);
+                    attr_index=find_value_index_in_interesting_vals(r);
+                    if (attr_index==31)
+                        log("try{elementTree1["+i+"].setAttribute('"+p+"','\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141');}catch(e){}");
+                    else if ((18<=attr_index && attr_index<=30)||11==attr_index)
+                        log("try{elementTree1["+i+"].setAttribute('"+p+"','"+r+"');}catch(e){}");
+                    else
+                        log("try{elementTree1["+i+"].setAttribute('"+p+"',"+r+");}catch(e){}");
+			}
+			
+		
+		catch (exception) {
+		}
+	}
+}
+    
+function morph_main(){
+	morph_fuzz();
+	window.location.reload(true);
+}	
+</script>
+</head>
+<body onload="morph_main()">
+<!--HTML Element-->
+</body>
+</html>
+

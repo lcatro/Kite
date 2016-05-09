@@ -10,7 +10,8 @@ import tornado.ioloop
 
 import process_monitor
 
-BLOCK_TIME=30    #  If process_monitor.py be block by browser ,we could kill and restart browser for next test
+BLOCK_TIME=180    #  If process_monitor.py be block by browser ,we could kill and restart browser for next test
+MAKE_MAX_ELEMENT=10
 MOR_POC = None
 
 globle_tick=0
@@ -48,6 +49,34 @@ def time_wait_restart_process_monitor_thread() :
             time.sleep(1)
         if is_restart :
             restart_process_monitor()
+            
+def rand(rand_range) :
+    return int(random.random()*(rand_range))
+    
+def rand_bool() :
+    if rand(2) :
+        return True
+    return False
+    
+def make_dom_element(max_element,close_element=True,is_nested_element=False) :
+    all_html_element=['<!-->','<!DOCTYPE>','<a>','<abbr>','<acronym>','<address>','<applet>','<area>','<article>','<aside>','<audio>','<b>','<base>','<basefont>','<bdi>','<bdo>','<big>','<blockquote>','<body>','<br>','<button>','<canvas>','<caption>','<center>','<cite>','<code>','<col>','<colgroup>','<command>','<datalist>','<dd>','<del>','<details>','<dfn>','<dialog>','<dir>','<div>','<dl>','<dt>','<em>','<embed>','<fieldset>','<figcaption>','<figure>','<font>','<footer>','<form>','<frame>','<frameset>','<h1>','<h2>','<h3>','<h4>','<h5>','<h6>','<head>','<header>','<hr>','<html>','<i>','<iframe>','<img>','<input>','<ins>','<kbd>','<keygen>','<label>','<legend>','<li>','<link>','<main>','<map>','<mark>','<menu>','<menuitem>','<meta>','<meter>','<nav>','<noframes>','<noscript>','<object>','<ol>','<optgroup>','<option>','<output>','<p>','<param>','<pre>','<progress>','<q>','<rp>','<rt>','<ruby>','<s>','<samp>','<script>','<section>','<select>','<small>','<source>','<span>','<strike>','<strong>','<style>','<sub>','<summary>','<sup>','<table>','<tbody>','<td>','<textarea>','<tfoot>','<th>','<thead>','<time>','<title>','<tr>','<track>','<tt>','<u>','<ul>','<var>','<video>','<wbr>']
+    make_element_string=''
+    if max_element<=0 :
+        return ''
+    if is_nested_element :
+        select_element=all_html_element[rand(len(all_html_element))]
+        make_element_string=select_element
+        make_element_string+=make_dom_element(max_element-1,close_element,is_nested_element)
+        select_element='</'+select_element[1:]
+        make_element_string+=select_element
+    else :
+        for element_index in range(max_element) :
+            select_element=all_html_element[rand(len(all_html_element))]
+            make_element_string+=select_element
+            if rand_bool() and close_element :  #  get close element
+                select_element='</'+select_element[1:]
+                make_element_string+=select_element
+    return make_element_string
 
 class MainHandler(tornado.web.RequestHandler):
     def initialize(self, copy_data):
@@ -64,6 +93,8 @@ class MainHandler(tornado.web.RequestHandler):
         # 2.replace vecotr template
         self.vectors = self.template.replace("%MOR_ARRAY%", str(intArray), 1)
         self.vectors = self.vectors.replace("%MOR_INDEX%", str(random.randint(0, 10)), 1)
+        self.vectors = self.vectors.replace("%MOR_MOD%", str(random.randint(3, 21)), 1)
+        self.vectors = self.vectors.replace("<!--HTML Element-->", make_dom_element(rand(MAKE_MAX_ELEMENT),rand_bool(),rand_bool()))
 
     def get(self):
         global MOR_POC,globle_tick
@@ -117,3 +148,4 @@ if __name__=='__main__' :
     restart_thread=threading.Thread(target=time_wait_restart_process_monitor_thread)
     restart_thread.start()
     listen(80,'','nduja.html')
+    

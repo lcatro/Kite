@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache"/>	
 <script type='text/javascript'>
 
-MAXELEM=6;
+MAXELEM=7;
 MAXPROP=4;
 MAXDESTR=3;
 MAXLISTENERS=3;
@@ -258,6 +258,7 @@ elements = [
 
 var mor_array = %MOR_ARRAY% ;
 var mor_index = %MOR_INDEX% ;
+//var mor_rand_mod = %MOR_MOD% ;  //  TIPS! less is good !..
 //turn_on_log var log_url = "%log_url%";
 
 function XHR() {
@@ -289,7 +290,7 @@ function rand( x ){
 }
 	
 function R(mod) {
-  return rand(10000) % mod;
+  return rand(10000) % mod;//rand(mor_rand_mod) % mod;
 }		
 // Pick either true or false
 function RBool(){
@@ -540,6 +541,7 @@ function buildDoc1(){
 
 function createTxtRange(){
 	try{
+        log('//no execute createTxtRange()');/*
 		range2 = document.body.createTextRange();
         log('range2=document.body.createTextRange();');
 		r2=R(document.body.all.length);
@@ -550,7 +552,7 @@ function createTxtRange(){
 		shift=R(20);			
 		range2.moveEnd("character", shift);
         log('range2.moveEnd("character",'+shift+');');
-
+*/
 	}	
 	catch (exception) {
 	}
@@ -558,6 +560,7 @@ function createTxtRange(){
 
 function createElemRange1(){
 	try{
+        log('//no execute createElemRange1()');/*
 		range1 = document.createRange();
         log('range1 = document.createRange();');
 		r1=R(document.all.length);
@@ -571,6 +574,7 @@ function createElemRange1(){
 		range1.setEnd(endNode, 0);
         log('range1.setEnd('+endNode+', 0);');
 		//alert("range created");
+        */
 	}
 	catch (exception) {
 	}
@@ -578,6 +582,7 @@ function createElemRange1(){
 
 function createElemRange(){
 	try{
+        log('//no execute createElemRange()');/*
 		range = document.createRange();
         log('range=document.createRange();');
 		r1=R(document.all.length);
@@ -590,7 +595,7 @@ function createElemRange(){
         log('endNode=document.all['+r2+'];');
 		range.setEnd(endNode, 0);
         log('try{range.setEnd(endNode,0);}catch(e){}');
-		
+		*/
 	}
 	catch (exception) {
 	}
@@ -612,8 +617,8 @@ function createTreeWalker(){
 		rb=R(document.all.length);
 		randRoot=document.all[rb];
 		log('randRoot=document.all['+rb+'];');
-		tw = document.createTreeWalker(document.all[randRoot], NodeFilter.SHOW_ALL, ElementChecker, false);
-        log('tw=document.createTreeWalker(document.all[document.all['+rb+']],NodeFilter.SHOW_ALL,ElementChecker,false);');
+		tw = document.createTreeWalker(randRoot, NodeFilter.SHOW_ALL, ElementChecker, false);
+        log('tw=document.createTreeWalker(document.all['+rb+'],NodeFilter.SHOW_ALL,ElementChecker,false);');
 		}
 		catch (exception) {
 		}
@@ -623,8 +628,9 @@ function createNodeIterator(){
 	 try{
 		rb=R(document.all.length);
 		randRoot=document.all[rb];
-		ni = document.createNodeIterator(document.all[randRoot], NodeFilter.SHOW_ALL, ElementChecker, false);
-        log('tw=document.createNodeIterator(document.all[document.all['+rb+']],NodeFilter.SHOW_ALL,ElementChecker,false);');
+		log('randRoot=document.all['+rb+'];');
+		ni = document.createNodeIterator(randRoot, NodeFilter.SHOW_ALL, ElementChecker, false);
+        log('tw=document.createNodeIterator(document.all['+rb+'],NodeFilter.SHOW_ALL,ElementChecker,false);');
 		}
 		catch (exception) {
 		}
@@ -716,7 +722,7 @@ function find_value_index_in_interesting_vals(data) {
 function tweakElem(elem){
 	for( var p in elem){
 		try {
-			
+			        if (p.indexOf("on")!=-1) continue;
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
                     attr_index=find_value_index_in_interesting_vals(r);
@@ -738,7 +744,7 @@ function tweakElem(elem){
 function tweakattributes1(elem,i){
 	for( var p in elem){
 		try {
-			
+			        if (p.indexOf("on")!=-1) continue;
 					r=rand_item(interesting_vals);
 					elem.setAttribute(p,r);
                     attr_index=find_value_index_in_interesting_vals(r);
@@ -758,6 +764,7 @@ function tweakattributes1(elem,i){
 function tweakattributes(elem){
 		for( var p in elem){
 			try {
+			     if (p.indexOf("on")!=-1) continue;
 				elem.setAttribute(p,"\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141\\u4141");
                 //log("elem.setAttribute('"+p+"','\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141\u4141');");
 			}
@@ -836,7 +843,7 @@ function boom(){
 }
 
 function alterRange(){
-	try{
+	try{/*
 		cmd=rand(11);
 		rb=R(document.all.length);//va ristretto alla length del range
 		randElem=document.all[rb];
@@ -887,7 +894,7 @@ function alterRange(){
                 log("try{range.setEndBefore(randElem);}catch(e){}");
 				break;
 		}		
-		
+		*/
 						
 	}
 	catch( exception )
@@ -897,14 +904,14 @@ function alterRange(){
 }
 
 function alterTextRange(){
-	try{
+	try{/*
 		cmd=R(commands.length);
 		//alert(cmd)
 		range2.select();
         log("range2.select();");
 		range2.execCommand(commands[cmd],true,null);
         log("range2.execCommand('"+commands[cmd]+"',true,null);");
-	
+	*/
 	}
 	catch( exception )
 	{
