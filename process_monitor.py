@@ -5,6 +5,8 @@ import time
 import win32event
 import win32process
 
+from valid_poc import *
+
 BROWSER_PATH='"C:\\Program Files\\Internet Explorer\\iexplore.exe"'
 BROWSER_ARG_LIST=''
 FUZZING_URL='http://127.0.0.1/vector'
@@ -35,10 +37,26 @@ def get_sub_process(create_process_pid) :
 def kill_process(pid) :
     os.kill(pid,9)
     
-def dump_process_and_restart(data) :
-    os.system('get_poc.py')
+def dump_process_and_restart(exception) :
+    EIP=debugger.get_register('EIP')
+    except_instruction=self.disasm_around(EIP,1)
+    if exception==pydbg.defines.EXCEPTION_GUARD_PAGE :
+        os.system('get_poc.py '+get_exception(exception)+'-'+except_instruction)
+    elif exception==pydbg.defines.EXCEPTION_ACCESS_VIOLATION :
+        os.system('get_poc.py '+get_exception(exception)+'-'+except_instruction)
+    elif exception==EXCEPTION_STACK_OVERFLOW :
+        os.system('get_poc.py '+get_exception(exception)+'-'+except_instruction)
     debugger.detach()
     kill_process(BROWSER_PID)
+    
+def crash_recall_guard_page(self) :
+    dump_process_and_restart(pydbg.defines.EXCEPTION_GUARD_PAGE)
+    
+def crash_recall_access_violation(self) :
+    dump_process_and_restart(pydbg.defines.EXCEPTION_ACCESS_VIOLATION)
+    
+def crash_recall_stack_overflow(self) :
+    dump_process_and_restart(EXCEPTION_STACK_OVERFLOW)
     
 def main() :
     browser_process=create_process(BROWSER_PATH+' '+BROWSER_ARG_LIST+' '+FUZZING_URL)
@@ -49,9 +67,9 @@ def main() :
     debugger=pydbg.pydbg()
     try :
         debugger.attach(BROWSER_PID)    #  get_sub_process(BROWSER_PID)[0])
-        debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,dump_process_and_restart)
-        debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,dump_process_and_restart)
-        debugger.set_callback(EXCEPTION_STACK_OVEWFLOW,dump_process_and_restart)
+        debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,crash_recall_access_violation)
+        debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,crash_recall_guard_page)
+        debugger.set_callback(EXCEPTION_STACK_OVEWFLOW,crash_recall_stack_overflow)
         debugger.run()
         win32event.WaitForSingleObject(browser_process[0],-1)  #  browser_process[0] === Process Handle
     except :

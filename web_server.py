@@ -11,7 +11,7 @@ import tornado.ioloop
 import process_monitor
 
 BLOCK_TIME=180    #  If process_monitor.py be block by browser ,we could kill and restart browser for next test
-MAKE_MAX_ELEMENT=10
+MAKE_MAX_ELEMENT=6
 MOR_POC = None
 
 globle_tick=0
