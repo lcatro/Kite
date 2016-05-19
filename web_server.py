@@ -10,7 +10,7 @@ import tornado.ioloop
 
 import process_monitor
 
-BLOCK_TIME=180    #  If process_monitor.py be block by browser ,we could kill and restart browser for next test
+BLOCK_TIME=300    #  If process_monitor.py be block by browser ,we could kill and restart browser for next test
 MAKE_MAX_ELEMENT=6
 MOR_POC = None
 
@@ -96,6 +96,11 @@ class MainHandler(tornado.web.RequestHandler):
         self.vectors = self.vectors.replace("%MOR_MOD%", str(random.randint(3, 21)), 1)
         self.vectors = self.vectors.replace("<!--HTML Element-->", make_dom_element(rand(MAKE_MAX_ELEMENT),rand_bool(),rand_bool()))
 
+        self.vectors = self.vectors.replace("//turn_on_fuzzing", '', 1)
+        self.vectors = self.vectors.replace("%DYNAMIC_MAKE_RANDOM_NUMBER_ARRAY%", str(intArray), 1)
+        #self.vectors = self.vectors.replace("//turn_on_element", '', 1)
+        #self.vectors = self.vectors.replace("%DYNAMIC_MAKE_SPCEIFY_ELEMENT_ARRAY%", make_dom_element , 1)
+        
     def get(self):
         global MOR_POC,globle_tick
         self.gen()

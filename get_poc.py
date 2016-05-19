@@ -17,7 +17,7 @@ def save_poc(poc_data,exception_data) :
     else :
         file_=open('poc/'+get_md5(poc_data)+'.poc.html','w')
     if file_ :
-        data=data.replace('/*patch me in poc*/','//')
+        poc_data=poc_data.replace('/*patch me in poc*/','//')
         file_.write(poc_data)
         file_.close()
 

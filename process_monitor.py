@@ -39,13 +39,9 @@ def kill_process(pid) :
     
 def dump_process_and_restart(exception) :
     EIP=debugger.get_register('EIP')
-    except_instruction=self.disasm_around(EIP,1)
-    if exception==pydbg.defines.EXCEPTION_GUARD_PAGE :
-        os.system('get_poc.py '+get_exception(exception)+'-'+except_instruction)
-    elif exception==pydbg.defines.EXCEPTION_ACCESS_VIOLATION :
-        os.system('get_poc.py '+get_exception(exception)+'-'+except_instruction)
-    elif exception==EXCEPTION_STACK_OVERFLOW :
-        os.system('get_poc.py '+get_exception(exception)+'-'+except_instruction)
+    except_instruction=debugger.disasm_around(EIP,1)
+    if exception==pydbg.defines.EXCEPTION_GUARD_PAGE or exception==pydbg.defines.EXCEPTION_ACCESS_VIOLATION or exception==EXCEPTION_STACK_OVERFLOW :
+        os.system('get_poc.py "'+get_exception(exception)+'-'+str(hex(EIP))[:-1]+'-'+except_instruction[1][1]+'"')
     debugger.detach()
     kill_process(BROWSER_PID)
     
@@ -65,16 +61,16 @@ def main() :
     BROWSER_PID=browser_process[2]  #  browser_process[2] === PID
     time.sleep(0.2)
     debugger=pydbg.pydbg()
-    try :
-        debugger.attach(BROWSER_PID)    #  get_sub_process(BROWSER_PID)[0])
-        debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,crash_recall_access_violation)
-        debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,crash_recall_guard_page)
-        debugger.set_callback(EXCEPTION_STACK_OVEWFLOW,crash_recall_stack_overflow)
-        debugger.run()
-        win32event.WaitForSingleObject(browser_process[0],-1)  #  browser_process[0] === Process Handle
-    except :
-        print 'WARNING! pydbg can not attach to this process ,maybe you attach to a 64-bit process ,pydbg jut support attach to 32-bit process!'
-        exit()
+#    try :
+    debugger.attach(BROWSER_PID)    #  get_sub_process(BROWSER_PID)[0])
+    debugger.set_callback(pydbg.defines.EXCEPTION_ACCESS_VIOLATION,crash_recall_access_violation)
+    debugger.set_callback(pydbg.defines.EXCEPTION_GUARD_PAGE,crash_recall_guard_page)
+    debugger.set_callback(EXCEPTION_STACK_OVEWFLOW,crash_recall_stack_overflow)
+    debugger.run()
+    win32event.WaitForSingleObject(browser_process[0],-1)  #  browser_process[0] === Process Handle
+#    except :
+#        print 'WARNING! pydbg can not attach to this process ,maybe you attach to a 64-bit process ,pydbg jut support attach to 32-bit process!'
+#        exit()
     
 if __name__=='__main__' :
     main()

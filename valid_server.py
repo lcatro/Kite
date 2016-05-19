@@ -55,7 +55,7 @@ class PocHandler(tornado.web.RequestHandler):
                     file_poc=open(file_list[int(data)]);
                     if file_poc :
                         file_poc_data=file_poc.read()
-			if is_debug :
+                        if is_debug :
                             file_poc_data=file_poc_data.replace('//turn_on_log ','')
                             file_poc_data=file_poc_data.replace('%log_url%',POC_URL)
                         self.write(file_poc_data.encode('utf-8'))
