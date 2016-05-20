@@ -119,6 +119,10 @@ class PocHandler(tornado.web.RequestHandler):
 class FileHandler():
     def set_extra_headers(self, path):
         self.set_header("Cache-control", "no-cache")
+        
+class OtherHandler(tornado.web.RequestHandler) :
+    def get(self,a) :
+        self.write("<script>window.location.href='vector';</script>")
 
 def listen(port_args, fuzzer_args, postfix=".html"):
     # cancel log output in commandline
@@ -142,7 +146,7 @@ def listen(port_args, fuzzer_args, postfix=".html"):
     handler = [
         (r"/vector", MainHandler, dict(copy_data=copy_data)),
         (r"/poc", PocHandler),
-        (r"/(.*)", tornado.web.StaticFileHandler, dict(path=static_path)),
+        (r"/(.*)", OtherHandler),
     ]
     http_Server = tornado.web.Application(handlers=handler)
     http_Server.listen(port_args)
@@ -152,5 +156,6 @@ if __name__=='__main__' :
     print 'Server running'
     restart_thread=threading.Thread(target=time_wait_restart_process_monitor_thread)
     restart_thread.start()
-    listen(80,'','nduja.html')
+#    listen(80,'','nduja.html')
+    listen(80,'','kite.html')
     
