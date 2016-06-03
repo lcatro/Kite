@@ -1,0 +1,20 @@
+<html>
+    <script>
+        function load() {
+            var a=document.createElement('rect');
+            a.width=300;
+            a.height=300;
+            var svg=document.getElementsByTagName('svg');
+//            svg.
+        }
+        function oner() {
+            alert(event.tagName);
+        }
+    </script>
+    <body>
+        <img src="" onerror="oner()"/>
+        <svg onload="load();">
+            <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
+        </svg>
+    </body>
+</html>
