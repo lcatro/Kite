@@ -86,3 +86,5 @@ TIPS 2:You need manual setting some setting about Internet Explorer .I packet th
 TIPS 3:Add `valid_poc.py` and `valid_server.py` .First ,start `valid_server.py` to run a WEB server for valid Fuzzing PoC is or not a valid Vuln ;and than ,run `valid_poc.py` call Browser getting this PoC to process and `valid_poc.py` will analysis crash file ,if this is a Vuln Crash File,it will save this PoC to dir **exploit**<br/>
 TIPS 4:May you need to setting what browser you want to test path in `process_monitor.py` and `valid_poc.py`<br/>
 TIPS 4:在`process_monitor.py` 和`valid_poc.py` 中设置浏览器路径<br/>
+
+![](https://github.com/users/follow?target=ldxw8)<br/><br/>
