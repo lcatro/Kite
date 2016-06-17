@@ -1,7 +1,7 @@
 
 ##New Architecture
 ---
-![Kite_Fuzzing_Architecture](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/Kite_Fuzzing_Architecture.jpg)<br/><br/>
+![Kite_Fuzzing_Architecture](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/Kite_Fuzzing_Architecture.png)<br/><br/>
 Now developing
 
 
