@@ -1,3 +1,10 @@
+
+##New Architecture
+---
+![Kite_Fuzzing_Architecture](https://raw.githubusercontent.com/lcatro/browser_fuzzing/master/pic/Kite_Fuzzing_Architecture.jpg)<br/><br/>
+Now developing
+
+
 ##How to using it
 ---
 ###Fuzzing
